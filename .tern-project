@@ -3,7 +3,6 @@
    "ecmascript"
   ],
   "plugins": {
-    "string": {},
     "node": {}
   }
 }

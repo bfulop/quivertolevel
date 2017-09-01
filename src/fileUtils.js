@@ -12,8 +12,4 @@ function readFile (filename) {
   )
 }
 
-function testTask (aname) {
-  return new Task((rej, res) => res(aname))
-}
-
-module.exports = { readFile, testTask }
+module.exports = { readFile }

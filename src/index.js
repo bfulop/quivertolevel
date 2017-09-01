@@ -8,15 +8,15 @@ const Task = require('data.task')
 // convert an either to a task
 const eitherToTask = e => e.fold(Task.rejected, Task.of)
 
-const getConnection = fileUtils
+const getConfig = fileUtils
   .readFile('../config.json')
   .map(config => tryCatch(() => JSON.parse(config)))
   .chain(eitherToTask)
   .map(c => c.mongodb)
 
-console.log('getc', getConnection)
+console.log('getc', getConfig)
 
-getConnection.fork(e => {
+getConfig.fork(e => {
   console.log('error!!')
   return e
 }, r => {
@@ -34,3 +34,5 @@ getConnection.fork(e => {
 
 //   db.close()
 // })
+
+module.exports = { getConfig }
