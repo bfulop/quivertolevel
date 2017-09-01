@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const Task = require('data.task')
 
-function readFile(filename) {
+function readFile (filename) {
   return new Task((rej, res) =>
     fs.readFile(
       path.resolve(filename),
@@ -12,4 +12,8 @@ function readFile(filename) {
   )
 }
 
-module.exports = { readFile }
+function testTask (aname) {
+  return new Task((rej, res) => res(aname))
+}
+
+module.exports = { readFile, testTask }
