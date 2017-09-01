@@ -1,0 +1,727 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "package.json",
+			"settings":
+			{
+				"buffer_size": 356,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/getconfig.js",
+			"settings":
+			{
+				"buffer_size": 0,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/fileUtils.js",
+			"settings":
+			{
+				"buffer_size": 104,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/another.js",
+			"settings":
+			{
+				"buffer_size": 40,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/fpUtils.js",
+			"settings":
+			{
+				"buffer_size": 0,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/either.js",
+			"settings":
+			{
+				"buffer_size": 658,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": ".tern-project",
+			"settings":
+			{
+				"buffer_size": 141,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"GruntJS",
+					""
+				],
+				[
+					"GruntJS",
+					"livraison"
+				],
+				[
+					"GruntJS",
+					"rsupload"
+				]
+			],
+			[
+				"GruntJS",
+				"rsupload"
+			]
+		],
+		[
+			[
+				[
+					"GruntJS",
+					""
+				],
+				[
+					"GruntJS",
+					"livraison"
+				],
+				[
+					"GruntJS",
+					"test"
+				]
+			],
+			[
+				"GruntJS",
+				"test"
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 320.0,
+		"last_filter": "form",
+		"selected_items":
+		[
+			[
+				"form",
+				"JsPrettier: Format Code"
+			],
+			[
+				"mo",
+				"Monokai Pro: select theme"
+			],
+			[
+				"file history",
+				"File History: Open recently closed file… (Current Project)"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"remov",
+				"Package Control: Remove Package"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"disa",
+				"Package Control: Disable Package"
+			],
+			[
+				"term",
+				"Terminal: Open"
+			],
+			[
+				"liv",
+				"Build With: GruntJS - livraison"
+			],
+			[
+				"remove pa",
+				"Package Control: Remove Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"livr",
+				"Build With: GruntJS - livraison"
+			],
+			[
+				"prett",
+				"JsPrettier: Format Code"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"skin",
+				"UI: Select Skin"
+			],
+			[
+				"select skin",
+				"UI: Select Skin"
+			],
+			[
+				"side",
+				"View: Toggle Open Files in Side Bar"
+			],
+			[
+				"sidebar",
+				"View: Toggle Side Bar"
+			]
+		],
+		"width": 470.0
+	},
+	"console":
+	{
+		"height": 317.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = 'df21e130d211cfc94d9b0905775a7c0f' + '1e3d39e33b79698005270310898eea76'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/bfulop/Work/Abundancia/quivertomongo",
+		"/Users/bfulop/Work/Abundancia/quivertomongo/src"
+	],
+	"file_history":
+	[
+		"/Users/bfulop/Work/Abundancia/quivertomongo/src/index.js",
+		"/Users/bfulop/Work/Abundancia/quivertomongo/README.md",
+		"/Users/bfulop/Work/Abundancia/quivertomongo/LICENSE",
+		"/Users/bfulop/Library/Caches/Transmit/A5F30064-3F2D-431C-8E80-B7DEB77D3B3B/139.162.246.42/etc/mongod.conf",
+		"/Users/bfulop/Work/BETC/Peugeot/Peugeot CRM.sublime-project",
+		"/Users/bfulop/Work/BETC/Peugeot/dist/DMP_2_108_FROID-fr.html",
+		"/Users/bfulop/Work/BETC/Peugeot/grunt/aliases.yaml",
+		"/Users/bfulop/Work/BETC/Peugeot/src/data/emails/DMP_2_108_FROID-fr.yml",
+		"/Users/bfulop/Work/BETC/Peugeot/src/helpers/crm-helpers.js",
+		"/Users/bfulop/Library/Application Support/Sublime Text 3/Packages/File History/Default (OSX).sublime-keymap",
+		"/Users/bfulop/Library/Application Support/Sublime Text 3/Packages/User/TidyTabs.sublime-settings",
+		"/Users/bfulop/Library/Application Support/Sublime Text 3/Packages/User/grunt.sublime-build",
+		"/Users/bfulop/Library/Application Support/Sublime Text 3/Packages/Emmet/Default (OSX).sublime-keymap",
+		"/Users/bfulop/Library/Application Support/Sublime Text 3/Packages/Emmet/Emmet.sublime-settings",
+		"/Users/bfulop/Work/BETC/Peugeot/Gruntfile.js",
+		"/Users/bfulop/Work/BETC/Peugeot/dist/DMP_2_108_CHAUD-fr.html",
+		"/Users/bfulop/Work/BETC/Peugeot/full-package.json",
+		"/Users/bfulop/Work/BETC/Peugeot/peugeot_crm.sublime-workspace",
+		"/Users/bfulop/Work/BETC/Peugeot/peugeot_crm.sublime-project",
+		"/Users/bfulop/Work/BETC/Peugeot/src/emails/DMP_2_208_CHAUD-fr.hbs",
+		"/Users/bfulop/Work/BETC/Peugeot/src/emails/DMP_2_308_CHAUD-fr.hbs",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/target/DMP_2_108_TIEDE-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/target/DMP_2_2008_CHAUD-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/target/DMP_2_2008_FROID-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/target/DMP_2_2008_TIEDE-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/target/DMP_2_208_TIEDE-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/target/DMP_2_3008_CHAUD-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/target/DMP_2_3008_FROID-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/target/DMP_2_3008_TIEDE-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/target/DMP_2_308_CHAUD-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/target/DMP_2_308_FROID-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/target/DMP_2_308_TIEDE-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/target/DMP_2_5008_CHAUD-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/target/DMP_2_5008_FROID-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/target/DMP_2_5008_TIEDE-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/target/DMP_2_508_CHAUD-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/target/DMP_2_508_FROID-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/target/DMP_2_508_TIEDE-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_108_CHAUD-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_108_TIEDE-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_2008_CHAUD-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_2008_FROID-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_2008_TIEDE-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_208_CHAUD-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_208_FROID-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_208_TIEDE-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_3008_CHAUD-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_3008_FROID-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_3008_TIEDE-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_308_CHAUD-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_308_FROID-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_308_TIEDE-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_5008_CHAUD-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_5008_FROID-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_5008_TIEDE-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_508_CHAUD-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_508_FROID-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/source/DMP_2_508_TIEDE-fr.txt",
+		"/Users/bfulop/Work/BETC/Peugeot/url-check/target/DMP_2_108_FROID-fr.txt"
+	],
+	"find":
+	{
+		"height": 29.0
+	},
+	"find_in_files":
+	{
+		"height": 138.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "package.json",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 356,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								117,
+								117
+							]
+						],
+						"settings":
+						{
+							"git_gutter_is_enabled": false,
+							"syntax": "Packages/JavaScript/JSON.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/getconfig.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"auto_name": "",
+							"git_gutter_is_enabled": false,
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/fileUtils.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 104,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								101,
+								101
+							]
+						],
+						"settings":
+						{
+							"git_gutter_is_enabled": false,
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/another.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 40,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								37,
+								37
+							]
+						],
+						"settings":
+						{
+							"git_gutter_is_enabled": false,
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/fpUtils.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"git_gutter_is_enabled": false,
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 5,
+					"file": "src/either.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 658,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								656,
+								656
+							]
+						],
+						"settings":
+						{
+							"git_gutter_is_enabled": false,
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/another.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 40,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"git_gutter_is_enabled": false,
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": ".tern-project",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 141,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"git_gutter_is_enabled": false,
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 29.0
+	},
+	"input":
+	{
+		"height": 53.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.5,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 372.0
+	},
+	"output.find_results":
+	{
+		"height": 100.0
+	},
+	"pinned_build_system": "GruntJS",
+	"project": "quivertomongo.sublime-project",
+	"replace":
+	{
+		"height": 54.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"et",
+				"src/either.js"
+			],
+			[
+				"tern",
+				".tern-project"
+			],
+			[
+				"ano",
+				"src/another.js"
+			],
+			[
+				"ei",
+				"src/either.js"
+			],
+			[
+				"ali",
+				"grunt/aliases.yaml"
+			],
+			[
+				"crm",
+				"src/helpers/crm-helpers.js"
+			],
+			[
+				"",
+				"src/data/emails/DMP_2_108_FROID-fr.yml"
+			],
+			[
+				"la",
+				"src/partials/components/la-body.hbs"
+			],
+			[
+				"block-te",
+				"src/partials/components/block-texte.hbs"
+			],
+			[
+				"al",
+				"grunt/aliases.yaml"
+			],
+			[
+				"dmp",
+				"dist/DMP_2_108_CHAUD-fr.html"
+			],
+			[
+				"help",
+				"src/helpers/crm-helpers.js"
+			],
+			[
+				"dmp_2froidym",
+				"src/data/emails/DMP_2_108_FROID-fr.yml"
+			],
+			[
+				"pac",
+				"package.json"
+			],
+			[
+				"308b",
+				"src/emails/DMP_2_308_CHAUD-fr.hbs"
+			],
+			[
+				"208hbs",
+				"src/emails/DMP_2_208_CHAUD-fr.hbs"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/Work/BETC/Peugeot/Peugeot CRM.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": true,
+	"show_tabs": false,
+	"side_bar_visible": true,
+	"side_bar_width": 234.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

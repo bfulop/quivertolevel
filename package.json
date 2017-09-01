@@ -1,0 +1,23 @@
+{
+  "name": "quivertomongo",
+  "version": "0.0.1",
+  "description": "Export Quiver notes to MongoDB",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bfulop/quivertomongo.git"
+  },
+  "keywords": [
+    "MongoDB",
+    "Quiver"
+  ],
+  "author": "Balint Fulop <bfulop@mac.com> (http://abundancia.io/)",
+  "license": "MIT",
+  "dependencies": {
+    "data.task": "^3.1.1",
+    "mongodb": "^2.2.31"
+  }
+}
