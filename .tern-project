@@ -1,8 +1,10 @@
 {
-  "libs": [
-   "ecmascript"
-  ],
+  "libs": ["ecmascript", "chai"],
+  "loadEagerly": ["src/*.js"],
   "plugins": {
-    "node": {}
+    "node": {},
+    "modules": {
+      "load": "^(.{1,2}/)+|^testdouble$|^mongodb$"
+    }
   }
 }
