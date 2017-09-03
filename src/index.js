@@ -1,20 +1,9 @@
-var MongoClient = require('mongodb').MongoClient
-var assert = require('assert')
-var f = require('util').format
-const fileUtils = require('./fileUtils')
-const { tryCatch } = require('./either')
-const Task = require('data.task')
+// var MongoClient = require('mongodb').MongoClient
+// var assert = require('assert')
+// var f = require('util').format
 
-// convert an either to a task
-const eitherToTask = e => e.fold(Task.rejected, Task.of)
+const {eitherToTask} = require('./utils/nt')
 
-const getConfig = fileUtils
-  .readFile('../config.json')
-  .map(config => tryCatch(() => JSON.parse(config)))
-  .chain(eitherToTask)
-  .map(c => c.mongodb)
-
-console.log('getc', getConfig)
 
 getConfig.fork(e => {
   console.log('error!!')

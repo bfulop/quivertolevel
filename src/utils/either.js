@@ -25,7 +25,7 @@ const fromNullable = x =>
 const tryCatch = f => {
   try {
     return Right(f())
-  } catch (e) {
+  } catch(e) {
     return Left(e)
   }
 }
