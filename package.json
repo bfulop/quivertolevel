@@ -18,11 +18,24 @@
   "license": "MIT",
   "dependencies": {
     "data.task": "^3.1.1",
+    "immutable": "^3.8.1",
+    "immutable-ext": "^1.1.2",
     "mongodb": "^2.2.31"
   },
   "devDependencies": {
     "chai": "^4.1.2",
     "mocha": "^3.5.0",
     "testdouble": "^3.2.4"
+  },
+  "standard": {
+    "globals": [
+      "describe",
+      "expect",
+      "before",
+      "it",
+      "context",
+      "td",
+      "insp"
+    ]
   }
 }

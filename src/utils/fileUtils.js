@@ -12,4 +12,15 @@ function readFile (filename) {
   )
 }
 
-module.exports = { readFile }
+function readDir (dirpath) {
+  return new Task((rej, res) =>
+    fs.readFile(
+      path.resolve(dirpath),
+      'utf-8',
+      (err, contents) => (err ? rej(err) : res(contents))
+    )
+  )
+}
+
+
+module.exports = { readFile, readDir }
