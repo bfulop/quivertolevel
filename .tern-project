@@ -4,7 +4,7 @@
   "plugins": {
     "node": {},
     "modules": {
-      "load": "^(.{1,2}/)+|^testdouble$|^mongodb$"
+      "load": "^(.{1,2}/)+"
     }
   }
 }
