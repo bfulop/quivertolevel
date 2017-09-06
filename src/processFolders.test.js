@@ -19,12 +19,13 @@ describe('processing a list of notebooks', function () {
   })
 
   describe('processes a list', function () {
-    it('returns a single task', function () {
+    it('returns a list of tasks', function () {
       subject.processFolders.fork(
-        console.error,
-        t => {
-          expect(t).to.eql(['processed', 'processed'])
-        }
+        console.err,
+        r => r[0].fork(
+          console.err,
+          t => expect(t).to.eql('processed')
+          )
         )
     })
   })
