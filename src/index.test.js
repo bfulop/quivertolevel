@@ -19,7 +19,7 @@ describe('index', function () {
 
     const { addNoteToMongo } = td.replace('./addToMongo')
     td
-      .when(addNoteToMongo({ notebookid: 'shorts' }))
+      .when(addNoteToMongo('shorts'))
       .thenReturn(Task.of('success'))
 
     subject = require('./index')
@@ -27,7 +27,7 @@ describe('index', function () {
 
   describe('adds notes to mongodb', function () {
     it('gets back a success', function () {
-      subject.upload.fork(console.error, r => expect(r[0]).to.eql('pantssuccess'))
+      subject.upload.fork(console.error, r => expect(r[0]).to.eql('success'))
     })
   })
 })
