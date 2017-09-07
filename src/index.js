@@ -1,14 +1,12 @@
-// var MongoClient = require('mongodb').MongoClient
-// var assert = require('assert')
-// var f = require('util').format
-
 const { processFolders } = require('./processFolders')
 const { addNoteToMongo } = require('./addToMongo')
 const { List } = require('immutable-ext')
+const Task = require('data.task')
 
 const upload = processFolders
   .map(List)
-  .map(t => t.fold([]))
-  .map(xs => xs.map(r => addNoteToMongo(r)))
+  .chain(xs => xs.traverse(Task.of, r => r.map(addNoteToMongo)))
+  .chain(xs => xs.traverse(Task.of, fn => fn))
+  .map(r => r.fold([]))
 
 module.exports = { upload }
