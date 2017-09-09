@@ -6,5 +6,4 @@ const Box = x =>
   inspect: () => `Box(${x})`
 })
 
-
 module.exports = Box

@@ -21,6 +21,7 @@ describe('flattendeep', function () {
   it('flattens the deep structure', function () {
     subject(deepstuff).map(r => r.fork(console.error,
       t => {
+        console.log(insp(r))
         console.log(insp(t))
         expect(t.fold([])).to.eql(['pantssuccess1', 'pantssuccess1'])
       }
