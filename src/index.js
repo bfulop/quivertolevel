@@ -9,6 +9,6 @@ const upload = processFolders
   .chain(xs => xs.traverse(Task.of, formatNoteData))
   .map(xs => xs.fold())
   .chain(xs => xs.traverse(Task.of, addNoteToMongo))
-  .map(r => r.fold([]))
+  .map(xs => xs.fold([]))
 
 module.exports = { upload }

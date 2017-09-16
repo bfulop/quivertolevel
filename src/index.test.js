@@ -6,12 +6,7 @@ const { List } = require('immutable-ext')
 describe('index', function () {
   var subject
   before('setting up stubs', function () {
-    const notesData = 'pants'
-    const folderDef = {
-      meta: 'short',
-      notesData: [Task.of(notesData)]
-    }
-    const processedFolder = Task.of(folderDef)
+    const processedFolder = 'shorts'
     const processFolders = td.replace('./processFolders')
     processFolders.processFolders = Task.of([processedFolder, processedFolder])
 
