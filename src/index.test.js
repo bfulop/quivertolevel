@@ -15,8 +15,9 @@ describe('index', function () {
       .when(formatNoteData(processedFolder))
       .thenReturn(Task.of(List(['anote', 'anote'])))
 
-    const { addNoteToMongo } = td.replace('./addToMongo')
-    td.when(addNoteToMongo('anote')).thenReturn(Task.of('success'))
+    const addToDB = td.replace('./addToDB')
+    td.when(addToDB.addNoteToDB('anote')).thenReturn(Task.of('success'))
+    td.when(addToDB.addNoteBookToDB(List(['anote', 'anote']))).thenReturn(Task.of('notebook added'))
 
     subject = require('./index')
   })
@@ -25,7 +26,7 @@ describe('index', function () {
     it('gets back a list of notes to add', function () {
       subject.upload.fork(console.error, t => {
         console.log(insp(t))
-        expect(t).to.eql(['success', 'success', 'success', 'success'])
+        expect(t).to.eql(['notebook added', 'notebook added'])
       })
     })
   })

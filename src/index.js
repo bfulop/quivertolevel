@@ -1,5 +1,5 @@
 const { processFolders } = require('./processFolders')
-const { addNoteToMongo } = require('./addToMongo')
+const { addNoteBookToDB } = require('./addToDB')
 const { List } = require('immutable-ext')
 const Task = require('data.task')
 const formatNoteData = require('./formatNoteData')
@@ -7,8 +7,7 @@ const formatNoteData = require('./formatNoteData')
 const upload = processFolders
   .map(List)
   .chain(xs => xs.traverse(Task.of, formatNoteData))
-  .map(xs => xs.fold())
-  .chain(xs => xs.traverse(Task.of, addNoteToMongo))
+  .chain(xs => xs.traverse(Task.of, addNoteBookToDB))
   .map(xs => xs.fold([]))
 
 module.exports = { upload }
