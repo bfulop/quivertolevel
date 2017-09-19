@@ -8,10 +8,9 @@ describe('flattendeep', function () {
   before('test setup', function () {
     subject = require('./formatNoteData')
 
-    const notesData = 'success1'
     const folderDef = {
       meta: 'pants',
-      notesData: [Task.of(notesData), Task.of(notesData)]
+      notesData: [Task.of('success1'), Task.of('success1')]
 
     }
     const processedFolder = Task.of(folderDef)
