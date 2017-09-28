@@ -14,6 +14,7 @@ describe('processing a list of notebooks', function () {
     getNotebooks.getNotebooks = Task.of(['nobook1', 'nobook2'])
 
     var processANotebook = td.replace('./processANotebook')
+    
     _processedNoteBook = {
       meta: 'pants',
       notesData: [Task.of({ shoes: 'socks' })]

@@ -17,16 +17,13 @@ describe('index', function () {
       List.of(_processedNoteBook, _processedNoteBook)
     )
 
-    const formatNoteData = td.replace('./formatNoteData')
+    const flattenNoteBook = td.replace('./flattenNoteBook')
     td
-      .when(formatNoteData(_processedNoteBook))
+      .when(flattenNoteBook(_processedNoteBook))
       .thenReturn(Task.of(List(['anote', 'anote'])))
 
     const addToDB = td.replace('./addToDB')
     td.when(addToDB.addNoteToDB('anote')).thenReturn(Task.of('success'))
-    td
-      .when(addToDB.addNoteBookToDB(List(['anote', 'anote', 'anote', 'anote'])))
-      .thenReturn(Task.of('notebook added'))
 
     subject = require('./index')
   })
@@ -40,5 +37,3 @@ describe('index', function () {
     })
   })
 })
-
-// subject.upload = Task(List(Task))

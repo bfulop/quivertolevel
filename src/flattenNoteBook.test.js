@@ -14,7 +14,7 @@ describe('flattendeep', function () {
       meta: 'pants',
       notesData: [Task.of('note1'), Task.of('note2')]
     }
-    subject = require('./formatNoteData')(_processedNoteBook)
+    subject = require('./flattenNoteBook')(_processedNoteBook)
   })
 
   it('returns a Task containing a List of notes', function () {
