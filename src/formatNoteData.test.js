@@ -1,29 +1,30 @@
 'use strict'
 
 const Task = require('data.task')
-const { List } = require('immutable-ext')
 
 describe('flattendeep', function () {
-  var subject, deepstuff
-  before('test setup', function () {
-    subject = require('./formatNoteData')
+  var subject, _processedNoteBook
 
-    const folderDef = {
-      meta: 'pants',
-      notesData: [Task.of('success1'), Task.of('success1')]
-
-    }
-    const processedFolder = Task.of(folderDef)
-    deepstuff = [processedFolder]
+  afterEach(function () {
+    td.reset()
   })
 
-  it('flattens the deep structure', function () {
-    subject(deepstuff).map(r => r.fork(console.error,
-      t => {
-        console.log(insp(r))
-        console.log(insp(t))
-        expect(t.fold([])).to.eql(['pantssuccess1', 'pantssuccess1'])
-      }
-      ))
+  before('test setup', function () {
+    _processedNoteBook = {
+      meta: 'pants',
+      notesData: [Task.of('note1'), Task.of('note2')]
+    }
+    subject = require('./formatNoteData')(_processedNoteBook)
+  })
+
+  it('returns a Task containing a List of notes', function () {
+    console.log(insp(subject))
+    subject.fork(console.error, t => {
+      console.log(insp(t))
+      expect(t.fold([])).to.eql([
+        { nbook: 'pants', note: 'note1' },
+        { nbook: 'pants', note: 'note2' }
+      ])
+    })
   })
 })

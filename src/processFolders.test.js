@@ -1,7 +1,11 @@
 'use strict'
 
 describe('processing a list of notebooks', function () {
-  var subject
+  var subject, _processedNoteBook
+
+  afterEach(function () {
+    td.reset()
+  })
 
   before('set up stubs', function () {
     var Task = require('data.task')
@@ -10,23 +14,24 @@ describe('processing a list of notebooks', function () {
     getNotebooks.getNotebooks = Task.of(['nobook1', 'nobook2'])
 
     var processANotebook = td.replace('./processANotebook')
+    _processedNoteBook = {
+      meta: 'pants',
+      notesData: [Task.of({ shoes: 'socks' })]
+    }
 
     td
-    .when(processANotebook.processANotebook(td.matchers.isA(String)))
-    .thenReturn(Task.of('processed'))
+      .when(processANotebook.processANotebook(td.matchers.isA(String)))
+      .thenReturn(Task.of(_processedNoteBook))
 
     subject = require('./processFolders')
   })
 
-  describe('processes a list', function () {
-    it('returns a list of tasks', function () {
-      subject.processFolders.fork(
-        console.err,
-        r => r[0].fork(
-          console.err,
-          t => expect(t).to.eql('processed')
-          )
-        )
+  describe('processes', function () {
+    it('returns Task containing a List', function () {
+      subject.processFolders.fork(console.err, r => {
+        console.log(insp(r))
+        expect(r.fold([])[0]).to.eql(_processedNoteBook)
+      })
     })
   })
 })

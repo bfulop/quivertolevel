@@ -19,6 +19,8 @@ module.exports = function (wallaby) {
       type: 'node'
     },
 
+    // debug: true,
+
     setup: function (wallaby) {
       global.insp = f => (f && f.inspect ? f.inspect() : f)
       global.td = require('testdouble')
