@@ -23,7 +23,7 @@ describe('createKeys', function () {
           updated_at: 456,
           uuid: 'shortsid'
         },
-        contents: {
+        content: {
           pants: 'orange'
         }
       }

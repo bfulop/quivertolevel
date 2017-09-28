@@ -5,6 +5,10 @@ const Task = require('data.task')
 describe('processing a notebook', function () {
   var subject
 
+  afterEach(function () {
+    td.reset()
+  })
+
   before('set up reading meta', function () {
     var fileUtils = td.replace('./utils/fileUtils')
     td
