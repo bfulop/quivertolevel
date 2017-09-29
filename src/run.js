@@ -1,3 +1,5 @@
+'use strict'
+
 var index = require('./index')
 
 index.upload.fork(
