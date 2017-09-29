@@ -25,6 +25,7 @@ module.exports = function (wallaby) {
       global.insp = f => (f && f.inspect ? f.inspect() : f)
       global.td = require('testdouble')
       global.expect = require('chai').expect
+      require('quibble').ignoreCallsFromThisFile(require.main.filename);
     }
   }
 }
