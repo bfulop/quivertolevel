@@ -15,7 +15,7 @@ describe('processing a notebook', function () {
       .when(fileUtils.readFile('nbook/meta.json'))
       .thenReturn(Task.of(JSON.stringify({ stuff: 'foo' })))
 
-    td.when(fileUtils.readDir('nbook')).thenReturn(Task.of(['note1', 'note2']))
+    td.when(fileUtils.readDir('nbook')).thenReturn(Task.of(['meta.json', 'note1', 'note2']))
 
     var processNote = td.replace('./processNote').processNote
     td.when(processNote('nbook/note1')).thenReturn(Task.of({ pants: 'bar' }))

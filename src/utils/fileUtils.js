@@ -14,7 +14,7 @@ function readFile (filename) {
 
 function readDir (dirpath) {
   return new Task((rej, res) =>
-    fs.readFile(
+    fs.readdir(
       path.resolve(dirpath),
       'utf-8',
       (err, contents) => (err ? rej(err) : res(contents))

@@ -3,10 +3,12 @@ const { addNoteToDB } = require('./addToDB')
 const { List } = require('immutable-ext')
 const Task = require('data.task')
 const flattenNoteBook = require('./flattenNoteBook')
+const createKeys = require('./createKeys')
 
 const upload = processFolders
   .chain(xs => xs.traverse(Task.of, flattenNoteBook))
   .map(r => r.fold())
+  .map(xs => xs.map(r => createKeys(r)))
   .chain(xs => xs.traverse(Task.of, addNoteToDB))
   .map(xs => xs.fold([]))
 

@@ -10,7 +10,7 @@ describe('getting the list of notebooks', function () {
     getConfig.getConfig = Task.of({quiverpath: 'foo'})
 
     var fileUtils = td.replace('./utils/fileUtils')
-    td.when(fileUtils.readDir('foo')).thenReturn(Task.of('foodircontents'))
+    td.when(fileUtils.readDir('foo')).thenReturn(Task.of(['foodircontents', 'bardircontents']))
 
     subject = require('./getNotebooks')
   })
@@ -18,7 +18,7 @@ describe('getting the list of notebooks', function () {
   context('first run', function () {
     it('should be ok', function (done) {
       subject.getNotebooks.fork(console.error, t => {
-        expect(t).to.eql('foodircontents')
+        expect(t).to.eql(['foo/foodircontents', 'foo/bardircontents'])
         done()
       })
     })

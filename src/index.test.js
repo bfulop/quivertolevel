@@ -20,10 +20,13 @@ describe('index', function () {
     const flattenNoteBook = td.replace('./flattenNoteBook')
     td
       .when(flattenNoteBook(_processedNoteBook))
-      .thenReturn(Task.of(List(['anote', 'anote'])))
+      .thenReturn(Task.of(List(['pants', 'pants'])))
+
+    const createKeys = td.replace('./createKeys')
+    td.when(createKeys('pants')).thenReturn('shoes')
 
     const addToDB = td.replace('./addToDB')
-    td.when(addToDB.addNoteToDB('anote')).thenReturn(Task.of('success'))
+    td.when(addToDB.addNoteToDB('shoes')).thenReturn(Task.of('success'))
 
     subject = require('./index')
   })
