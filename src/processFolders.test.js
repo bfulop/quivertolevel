@@ -27,10 +27,9 @@ describe('processing a list of notebooks', function () {
     subject = require('./processFolders')
   })
 
-  describe('processes', function () {
-    it('returns Task containing a List', function () {
+  describe('processing folders', function () {
+    it('returns a Task containing a List', function () {
       subject.processFolders.fork(console.err, r => {
-        console.log(insp(r))
         expect(r.fold([])[0]).to.eql(_processedNoteBook)
       })
     })

@@ -14,38 +14,24 @@ describe('processing a notebook', function () {
     td
       .when(fileUtils.readFile('nbook/meta.json'))
       .thenReturn(Task.of(JSON.stringify({ stuff: 'foo' })))
-    
-    td.when(fileUtils.readDir('nbook'))
-    .thenReturn(Task.of(['note1', 'note2']))
+
+    td.when(fileUtils.readDir('nbook')).thenReturn(Task.of(['note1', 'note2']))
 
     var processNote = td.replace('./processNote').processNote
-    td.when(processNote('nbook/note1'))
-    .thenReturn(Task.of({ pants: 'bar' }))
+    td.when(processNote('nbook/note1')).thenReturn(Task.of({ pants: 'bar' }))
 
-    subject = require('./processANotebook')
+    subject = require('./processANotebook').processANotebook('nbook')
   })
 
   describe('called with a notebook path', function () {
     it('returns a Task with the metadata', function (done) {
-      subject.processANotebook('nbook').fork(
-        console.error,
-        t => {
-          expect(t.meta).to.eql({ stuff: 'foo' })
+      subject.fork(console.error, t => {
+        expect(t.meta).to.eql({ stuff: 'foo' })
+        t.notesData[0].fork(console.error, r => {
+          expect(r).to.eql({ pants: 'bar' })
           done()
-        }
-        )
-    })
-    it('notesData is an array of Tasks of notes', function (done) {
-      subject.processANotebook('nbook').fork(
-        console.error,
-        t => t.notesData[0].fork(
-          console.error,
-          r => { 
-            expect(r).to.eql({ pants: 'bar' }) 
-            done()
-          }
-          )
-        )
+        })
+      })
     })
   })
 })

@@ -3,14 +3,14 @@
 const Task = require('data.task')
 
 describe('processing a note', function () {
-  var subject
+  var subject, _notepath
 
   afterEach(function () {
     td.reset()
   })
 
   before('set up reading meta', function () {
-    var _notepath = 'nbook/note1'
+     _notepath = 'nbook/note1'
     var fileUtils = td.replace('./utils/fileUtils')
 
     td
@@ -20,16 +20,15 @@ describe('processing a note', function () {
       .when(fileUtils.readFile('nbook/note1/content.json'))
       .thenReturn(Task.of(JSON.stringify({ shoes: 'khaki' })))
 
-    subject = require('./processNote').processNote(_notepath)
+    subject = require('./processNote').processNote
   })
 
-  it('returns a single Task', function (done) {
-    subject.fork(console.error, r => {
+  it('returns a single Task', function () {
+    subject(_notepath).fork(console.error, r => {
       expect(r).to.eql({
         meta: { shirts: 'pink' },
         content: { shoes: 'khaki' }
       })
-      done()
     })
   })
 })

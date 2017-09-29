@@ -32,6 +32,7 @@
       "describe",
       "expect",
       "before",
+      "afterEach",
       "it",
       "context",
       "td",

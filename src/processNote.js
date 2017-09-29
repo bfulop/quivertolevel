@@ -8,8 +8,8 @@ const noteData = meta => content =>
 
 const getNoteMeta = npath =>
   fileUtils
-    .readFile(`${npath}/meta.json`)
-    .map(JSON.parse)
+      .readFile(`${npath}/meta.json`)
+      .map(JSON.parse)
 
 const getNoteContents = npath =>
   fileUtils

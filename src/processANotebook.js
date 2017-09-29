@@ -5,10 +5,11 @@ const Task = require('data.task')
 const noteBookData = meta => notesData =>
   Object.assign({}, { meta: meta }, { notesData: notesData })
 
-const getNotebookMeta = npath =>
-  fileUtils
+const getNotebookMeta = npath =>{
+  console.log(insp(npath))
+  return fileUtils
     .readFile(`${npath}/meta.json`)
-    .map(JSON.parse)
+    .map(JSON.parse)}
 
 const getNotesData = npath =>
   fileUtils
