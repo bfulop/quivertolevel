@@ -4,7 +4,8 @@
   "description": "Export Quiver notes to leveldb",
   "scripts": {
     "main": "node src/run",
-    "test": "mocha"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -26,8 +27,10 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "jest": "^23.6.0",
     "mocha": "^5.2.0",
-    "testdouble": "^3.8.2"
+    "testdouble": "^3.8.2",
+    "testdouble-jest": "^2.0.0"
   },
   "standard": {
     "globals": [
