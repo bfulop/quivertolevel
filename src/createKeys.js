@@ -9,4 +9,8 @@ const createkey = ndata =>
     { value: ndata }
   )
 
-module.exports = createkey
+module.exports = {
+  createkey: createkey,
+  what: 'hello',
+  any: 'more'
+}

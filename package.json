@@ -2,8 +2,8 @@
   "name": "quivertomongo",
   "version": "0.0.1",
   "description": "Export Quiver notes to leveldb",
-  "main": "src/index.js",
   "scripts": {
+    "main": "node src/run",
     "test": "mocha"
   },
   "repository": {
@@ -17,16 +17,17 @@
   "author": "Balint Fulop <bfulop@mac.com> (http://abundancia.io/)",
   "license": "MIT",
   "dependencies": {
-    "data.task": "^3.1.1",
-    "immutable": "^3.8.1",
-    "immutable-ext": "^1.1.2",
-    "leveldown": "^1.9.0",
-    "levelup": "^1.3.9"
+    "data.task": "^3.1.2",
+    "immutable": "^3.8.2",
+    "immutable-ext": "^1.1.5",
+    "leveldown": "^4.0.1",
+    "levelup": "^3.1.1",
+    "ramda": "^0.25.0"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "mocha": "^3.5.3",
-    "testdouble": "^3.2.6"
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "testdouble": "^3.8.2"
   },
   "standard": {
     "globals": [

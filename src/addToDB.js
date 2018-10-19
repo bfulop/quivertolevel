@@ -2,7 +2,7 @@ const Task = require('data.task')
 const levelup = require('levelup')
 const leveldown = require('leveldown')
 
-const db = levelup('./testdb', { db: leveldown })
+const db  = levelup(leveldown('./testdb'))
 
 const addNoteToDB = ({ key, value }) => {
   console.log(value)

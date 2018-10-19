@@ -4,3 +4,5 @@ node_modules
 /quivertomongo.sublime-workspace
 /testdb
 /src/testdb
+*.vim
+.ldb_history
