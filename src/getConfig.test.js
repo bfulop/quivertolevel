@@ -1,13 +1,21 @@
-var Task = require('data.task')
+const { task } = require('folktale/concurrency/task')
 jest.mock('./utils/fileUtils')
 var fileUtils = require('./utils/fileUtils')
 
 test('should get the config', done => {
-  const configfile = Task.of(JSON.stringify({ foo: 'bar' }))
-  fileUtils.readFile.mockReturnValue(configfile)
+  const readFileTask = task(resolver => resolver.resolve(JSON.stringify({ foo: 'bar' })))
+  fileUtils.readFile.mockReturnValue(readFileTask)
+
   var subject = require('./getConfig')
-  subject.getConfig.fork(console.error, t => {
-    expect(t).toEqual({ foo: 'bar' })
-    done()
+  subject.getConfig.run().listen({
+    onResolved: t => {
+      t.fold(
+        e => 'error',
+        r => {
+          expect(r).toEqual({ foo: 'bar' })
+          done()
+        }
+      )
+    }
   })
 })

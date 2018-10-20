@@ -1,23 +1,23 @@
 const fs = require('fs')
 const path = require('path')
-const Task = require('data.task')
+const { task } = require('folktale/concurrency/task')
 
 function readFile (filename) {
-  return new Task((rej, res) =>
+  return task(resolver =>
     fs.readFile(
       path.resolve(filename),
       'utf-8',
-      (err, contents) => (err ? rej(err) : res(contents))
+      (err, contents) => (err ? resolver.reject(err) : resolver.resolve(contents))
     )
   )
 }
 
 function readDir (dirpath) {
-  return new Task((rej, res) =>
+  return task(resolver => 
     fs.readdir(
       path.resolve(dirpath),
       'utf-8',
-      (err, contents) => (err ? rej(err) : res(contents))
+      (err, contents) => (err ? resolver.reject(err) : resolver.resolve(contents))
     )
   )
 }
