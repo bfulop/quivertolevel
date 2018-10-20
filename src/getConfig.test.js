@@ -8,10 +8,11 @@ const readFileTask = task(resolver =>
 fileUtils.readFile.mockReturnValue(readFileTask)
 
 test('should get the config', done => {
-  var subject = require('./getConfig')
-  subject.run().listen({
+  var subject = require('./getconfig')
+  subject()
+    .run().listen({
     onResolved: t => {
-      expect(t).toEqual({ foo: 'bar' })
+      expect(t).toEqual({foo: 'bar'})
       done()
     }
   })

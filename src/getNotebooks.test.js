@@ -1,33 +1,33 @@
 const { task } = require('folktale/concurrency/task')
-jest.mock('./getConfig')
-var getConfig = require('./getConfig')
 jest.mock('./utils/fileUtils')
-var fileUtils = require('./utils/fileUtils')
+let fileUtils = require('./utils/fileUtils')
 
+const readFileTask = task(resolver =>
+  resolver.resolve(
+    JSON.stringify({
+      children: [{ uuid: 'foodircontents' }, { uuid: 'bardircontents' }]
+    })
+  )
+)
+fileUtils.readFile.mockReturnValue(readFileTask)
 
-console.log('mocked normally')
+jest.mock('./getconfig')
+let getconfig = require('./getconfig')
+
+const getconfigTask = task(resolver => resolver.resolve({ quiverpath: 'foo' }))
+getconfig.mockReturnValue(getconfigTask)
+
 test('getting the list of notebooks', done => {
-  const getConfigTask = task(resolver =>
-    resolver.resolve({ quiverpath: 'foo' })
-  )
-  getConfig.mockReturnValue(getConfigTask)
-
-  const readFileTask = task(resolver =>
-    resolver.resolve(
-      JSON.stringify({
-        children: [{ uuid: 'foodircontents' }, { uuid: 'bardircontents' }]
-      })
-    )
-  )
-  fileUtils.readFile.mockReturnValue(readFileTask)
-
-  // ***********************
-
   var subject = require('./getNotebooks')
-  subject.run().listen({
-    onResolved: t => {
-      expect(t).to.eql(['foo/foodircontents', 'foo/bardircontents'])
-      done()
-    }
-  })
+  subject()
+    .run()
+    .listen({
+      onResolved: t => {
+        expect(t).toEqual([
+          'foo/foodircontents.qvnotebook',
+          'foo/bardircontents.qvnotebook'
+        ])
+        done()
+      }
+    })
 })
