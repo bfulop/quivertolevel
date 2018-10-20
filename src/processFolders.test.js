@@ -1,37 +1,31 @@
-'use strict'
+var Task = require('data.task')
 
-describe('processing a list of notebooks', function () {
-  var subject, _processedNoteBook
+jest.mock('./getNotebooks')
+var getNotebooks = require('./getNotebooks')
+jest.mock('./processANotebook')
+var processANotebook = require('./processANotebook')
 
-  afterEach(function () {
-    td.reset()
-  })
+  console.log('starst')
 
-  before('set up stubs', function () {
-    var Task = require('data.task')
+var _processedNoteBook = {
+  meta: 'pants',
+  notesData: [Task.of({ shoes: 'socks' })]
+}
 
-    var getNotebooks = td.replace('./getNotebooks')
-    getNotebooks.getNotebooks = Task.of(['nobook1', 'nobook2'])
+processANotebook.processANotebook.mockReturnValue(Task.of(_processedNoteBook))
 
-    var processANotebook = td.replace('./processANotebook')
-    
-    _processedNoteBook = {
-      meta: 'pants',
-      notesData: [Task.of({ shoes: 'socks' })]
-    }
+// getNotebooks.getNotebooks = Task.of(['nobook1', 'nobook2'])
+// getNotebooks.getNotebooks.map.mockReturnValue(Task.of(['nobook1', 'nobook2'])) 
+getNotebooks.getNotebooks = new Task((rej, res) => {
+  res(['nobook1', 'nobook2'])
+})
 
-    td
-      .when(processANotebook.processANotebook(td.matchers.isA(String)))
-      .thenReturn(Task.of(_processedNoteBook))
+var subject = require('./processFolders')
 
-    subject = require('./processFolders')
-  })
-
-  describe('processing folders', function () {
-    it('returns a Task containing a List', function () {
-      subject.processFolders.fork(console.err, r => {
-        expect(r.fold([])[0]).to.eql(_processedNoteBook)
-      })
-    })
+test('processing folders', done => {
+  subject.processFolders.fork(console.err, r => {
+    console.log('hono', r)
+    expect(r.fold([])[0]).to.eql(_processedNoteBook)
+    done()
   })
 })
