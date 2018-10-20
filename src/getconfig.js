@@ -7,7 +7,4 @@ const getConfig = fileUtils
   .map(config => tryCatch(() => JSON.parse(config)))
   .map(r => r.fold(e => 'error', c => c))
 
-
-  // .chain(e => 'error', r => r)
-
-module.exports = { getConfig }
+module.exports =  getConfig 
