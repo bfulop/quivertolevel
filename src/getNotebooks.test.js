@@ -1,32 +1,33 @@
-'use strict'
-describe('getting the list of notebooks', function() {
-  var subject
+const { task } = require('folktale/concurrency/task')
+jest.mock('./getConfig')
+var getConfig = require('./getConfig')
+jest.mock('./utils/fileUtils')
+var fileUtils = require('./utils/fileUtils')
 
-  before('set up stubs', function() {
-    var Task = require('data.task')
 
-    var getConfig = td.replace('./getConfig')
+console.log('mocked normally')
+test('getting the list of notebooks', done => {
+  const getConfigTask = task(resolver =>
+    resolver.resolve({ quiverpath: 'foo' })
+  )
+  getConfig.mockReturnValue(getConfigTask)
 
-    getConfig.getConfig = Task.of({ quiverpath: 'foo' })
-
-    var fileUtils = td.replace('./utils/fileUtils')
-    td.when(fileUtils.readFile('foo/meta.json')).thenReturn(
-      Task.of(
-        JSON.stringify({
-          children: [{ uuid: 'foodircontents' }, { uuid: 'bardircontents' }]
-        })
-      )
-    )
-
-    subject = require('./getNotebooks')
-  })
-
-  context('first run', function() {
-    it('should be ok', function(done) {
-      subject.getNotebooks.fork(console.error, t => {
-        expect(t).to.eql(['foo/foodircontents', 'foo/bardircontents'])
-        done()
+  const readFileTask = task(resolver =>
+    resolver.resolve(
+      JSON.stringify({
+        children: [{ uuid: 'foodircontents' }, { uuid: 'bardircontents' }]
       })
-    })
+    )
+  )
+  fileUtils.readFile.mockReturnValue(readFileTask)
+
+  // ***********************
+
+  var subject = require('./getNotebooks')
+  subject.run().listen({
+    onResolved: t => {
+      expect(t).to.eql(['foo/foodircontents', 'foo/bardircontents'])
+      done()
+    }
   })
 })
