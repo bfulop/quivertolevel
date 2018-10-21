@@ -2,10 +2,13 @@
   "name": "quivertomongo",
   "version": "0.0.1",
   "description": "Export Quiver notes to leveldb",
+  "jest": {
+    "testEnvironment": "node"
+  },
   "scripts": {
     "main": "node src/run",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "test": "jest --env node",
+    "test:watch": "jest --watch --env node"
   },
   "repository": {
     "type": "git",
