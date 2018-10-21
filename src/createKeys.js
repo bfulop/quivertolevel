@@ -1,5 +1,3 @@
-'use strict'
-
 const createkey = ndata => 
   Object.assign(
     {
@@ -9,8 +7,4 @@ const createkey = ndata =>
     { value: ndata }
   )
 
-module.exports = {
-  createkey: createkey,
-  what: 'hello',
-  any: 'more'
-}
+module.exports = createkey
