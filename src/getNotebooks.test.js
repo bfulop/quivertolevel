@@ -1,20 +1,18 @@
-const { task } = require('folktale/concurrency/task')
+const { of } = require('folktale/concurrency/task')
 jest.mock('./utils/fileUtils')
 let fileUtils = require('./utils/fileUtils')
 
-const readFileTask = task(resolver =>
-  resolver.resolve(
-    JSON.stringify({
-      children: [{ uuid: 'foodircontents' }, { uuid: 'bardircontents' }]
-    })
-  )
+const readFileTask = of(
+  JSON.stringify({
+    children: [{ uuid: 'foodircontents' }, { uuid: 'bardircontents' }]
+  })
 )
 fileUtils.readFile.mockReturnValue(readFileTask)
 
 jest.mock('./getconfig')
 let getconfig = require('./getconfig')
 
-const getconfigTask = task(resolver => resolver.resolve({ quiverpath: 'foo' }))
+const getconfigTask = of({ quiverpath: 'foo' })
 getconfig.mockReturnValue(getconfigTask)
 
 test('getting the list of notebooks', done => {

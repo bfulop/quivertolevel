@@ -1,34 +1,24 @@
-'use strict'
+const { of } = require('folktale/concurrency/task')
+jest.mock('./utils/fileUtils')
+var fileUtils = require('./utils/fileUtils')
 
-const Task = require('data.task')
+const readFileCases = {
+  'foo/meta.json': of(JSON.stringify({ shirts: 'pink' })),
+  'foo/content.json': of(JSON.stringify({ shoes: 'white' }))
+}
+fileUtils.readFile.mockImplementation(v => readFileCases[v])
 
-describe('processing a note', function () {
-  var subject, _notepath
-
-  afterEach(function () {
-    td.reset()
-  })
-
-  before('set up reading meta', function () {
-     _notepath = 'nbook/note1'
-    var fileUtils = td.replace('./utils/fileUtils')
-
-    td
-      .when(fileUtils.readFile('nbook/note1/meta.json'))
-      .thenReturn(Task.of(JSON.stringify({ shirts: 'pink' })))
-    td
-      .when(fileUtils.readFile('nbook/note1/content.json'))
-      .thenReturn(Task.of(JSON.stringify({ shoes: 'khaki' })))
-
-    subject = require('./processNote').processNote
-  })
-
-  it('returns a single Task', function () {
-    subject(_notepath).fork(console.error, r => {
-      expect(r).to.eql({
-        meta: { shirts: 'pink' },
-        content: { shoes: 'khaki' }
-      })
+test('returns a single Task', done => {
+  var subject = require('./processNote')
+  subject('foo')
+    .run()
+    .listen({
+      onResolved: t => {
+        expect(t).toEqual({
+          meta: { shirts: 'pink' },
+          content: { shoes: 'white' }
+        })
+        done()
+      }
     })
-  })
 })

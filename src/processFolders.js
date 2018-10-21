@@ -1,4 +1,16 @@
-'use strict'
+// function delay(ms) {
+//     return task(resolver => {
+//           const timerId = setTimeout(
+//                   () => { resolver.resolve() },
+//                   ms
+//                 );
+//           resolver.cleanup(() => {
+//                   clearTimeout(timerId);
+//                 });
+//         });
+// }
+
+// delay(100).run();
 
 const { getNotebooks } = require('./getNotebooks')
 const { processANotebook } = require('./processANotebook')

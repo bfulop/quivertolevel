@@ -1,24 +1,22 @@
-'use strict'
-
 const fileUtils = require('./utils/fileUtils')
-const Task = require('data.task')
+const { task } = require('folktale/concurrency/task')
 
-const noteData = meta => content =>
+const noteData = ([meta, content]) =>
   Object.assign({}, { meta: meta }, { content: content })
 
 const getNoteMeta = npath =>
-  fileUtils
-      .readFile(`${npath}/meta.json`)
-      .map(JSON.parse)
+  fileUtils.readFile(`${npath}/meta.json`).map(JSON.parse)
 
 const getNoteContents = npath =>
-  fileUtils
-    .readFile(`${npath}/content.json`)
-    .map(JSON.parse)
+  fileUtils.readFile(`${npath}/content.json`).map(JSON.parse)
 
-const processNote = npath => 
-  Task.of(noteData)
-  .ap(getNoteMeta(npath))
-  .ap(getNoteContents(npath))
+const processNote = npath =>
+  getNoteMeta(npath)
+    .and(getNoteContents(npath))
+    .map(noteData)
 
-module.exports = { processNote }
+// Task.of(noteData)
+// .ap(getNoteMeta(npath))
+// .ap(getNoteContents(npath))
+
+module.exports = processNote
