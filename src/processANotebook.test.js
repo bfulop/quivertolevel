@@ -1,37 +1,48 @@
-'use strict'
+const { of } = require('folktale/concurrency/task')
+jest.mock('./utils/fileUtils')
+var fileUtils = require('./utils/fileUtils')
+jest.mock('./processNote')
+var processNote = require('./processNote')
 
-const Task = require('data.task')
+const readFileCases = {
+  'nbook/meta.json': of(JSON.stringify({ stuff: 'foo' }))
+}
+fileUtils.readFile.mockImplementation(v => readFileCases[v])
 
-describe('processing a notebook', function () {
-  var subject
+const readDirCases = {
+  nbook: of(['meta.json', 'note1', 'note2'])
+}
+fileUtils.readDir.mockImplementation(v => readDirCases[v])
 
-  afterEach(function () {
-    td.reset()
-  })
+const processNoteCases = {
+  'nbook/note1': of({ pants: 'bar' })
+}
+processNote.mockImplementation(v => processNoteCases[v])
 
-  before('set up reading meta', function () {
-    var fileUtils = td.replace('./utils/fileUtils')
-    td
-      .when(fileUtils.readFile('nbook/meta.json'))
-      .thenReturn(Task.of(JSON.stringify({ stuff: 'foo' })))
+var subject = require('./processANotebook')
 
-    td.when(fileUtils.readDir('nbook')).thenReturn(Task.of(['meta.json', 'note1', 'note2']))
-
-    var processNote = td.replace('./processNote').processNote
-    td.when(processNote('nbook/note1')).thenReturn(Task.of({ pants: 'bar' }))
-
-    subject = require('./processANotebook').processANotebook('nbook')
-  })
-
-  describe('called with a notebook path', function () {
-    it('returns a Task with the metadata', function (done) {
-      subject.fork(console.error, t => {
-        expect(t.meta).to.eql({ stuff: 'foo' })
-        t.notesData[0].fork(console.error, r => {
-          expect(r).to.eql({ pants: 'bar' })
-          done()
-        })
-      })
+test('called with a notebook path', done => {
+  subject('nbook')
+    .run()
+    .listen({
+      onResolved: t => {
+        expect(t.meta).toEqual({ stuff: 'foo' })
+        done()
+      }
     })
-  })
+})
+
+test('notesdatae', done => {
+  subject('nbook')
+    .run()
+    .listen({
+      onResolved: t => {
+        t.notesData[0].run().listen({
+          onResolved: r => {
+            expect(t.meta).toEqual({ stuff: 'foo' })
+            done()
+          }
+        })
+      }
+    })
 })
