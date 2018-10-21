@@ -15,8 +15,4 @@ const processNote = npath =>
     .and(getNoteContents(npath))
     .map(noteData)
 
-// Task.of(noteData)
-// .ap(getNoteMeta(npath))
-// .ap(getNoteContents(npath))
-
 module.exports = processNote
