@@ -1,30 +1,20 @@
-'use strict'
+const { of } = require('folktale/concurrency/task')
 
-const Task = require('data.task')
+var _processedNoteBook = {
+  meta: 'pants',
+  notesData: [of('note1'), of('note2')]
+}
+var subject = require('./flattenNoteBook')
 
-describe('flattendeep', function () {
-  var subject, _processedNoteBook
-
-  afterEach(function () {
-    td.reset()
-  })
-
-  before('test setup', function () {
-    _processedNoteBook = {
-      meta: 'pants',
-      notesData: [Task.of('note1'), Task.of('note2')]
-    }
-    subject = require('./flattenNoteBook')(_processedNoteBook)
-  })
-
-  it('returns a Task containing a List of notes', function () {
-    console.log(insp(subject))
-    subject.fork(console.error, t => {
-      console.log(insp(t))
-      expect(t.fold([])).to.eql([
-        { nbook: 'pants', note: 'note1' },
-        { nbook: 'pants', note: 'note2' }
-      ])
+it('returns a Task containing a List of notes', function() {
+  subject(_processedNoteBook)
+    .run()
+    .listen({
+      onResolved: t => {
+        expect(t.fold([])).toEqual([
+          { nbook: 'pants', note: 'note1' },
+          { nbook: 'pants', note: 'note2' }
+        ])
+      }
     })
-  })
 })
