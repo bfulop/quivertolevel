@@ -1,1 +1,0 @@
-src/*.test.js --require test/helper

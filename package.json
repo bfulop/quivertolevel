@@ -21,7 +21,6 @@
   "author": "Balint Fulop <bfulop@mac.com> (http://abundancia.io/)",
   "license": "MIT",
   "dependencies": {
-    "data.task": "^3.1.2",
     "folktale": "^2.3.1",
     "immutable": "^3.8.2",
     "immutable-ext": "^1.1.5",
@@ -30,11 +29,7 @@
     "ramda": "^0.25.0"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
-    "jest": "^23.6.0",
-    "mocha": "^5.2.0",
-    "testdouble": "^3.8.2",
-    "testdouble-jest": "^2.0.0"
+    "jest": "^23.6.0"
   },
   "standard": {
     "globals": [
