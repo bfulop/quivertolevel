@@ -18,9 +18,15 @@ const _flattenedNote = {
 }
 subject = require('./createKeys')(_flattenedNote)
 
-test('creates the key for the note', function() {
-  expect(subject).toHaveProperty('key', 'pantsid:123:shortsid')
+test('adds the key for the note', function() {
+  expect(subject).toHaveProperty('notekey', 'note:shortsid')
 })
-test('copies the rest to the value', function() {
-  expect(subject.value).toHaveProperty('nbook', expect.any(Object))
+test('adds keys for listing notes in a notebook', function() {
+  expect(subject).toHaveProperty('anotebookkey', 'anotebook:pantsid:123:shortsid')
+})
+test('adds key for listing notebooks', function() {
+  expect(subject).toHaveProperty('notebookkey', 'notebooks:456:pantsid')
+})
+test('adds the complete note data', function() {
+  expect(subject.value).toMatchObject(_flattenedNote)
 })
