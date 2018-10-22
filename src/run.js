@@ -2,7 +2,17 @@
 
 var index = require('./index')
 
-index.upload.fork(
-  console.error,
-  console.log
-  )
+index()
+  .run()
+  .listen({
+    onResolved: r => {
+      console.log('successfully imported')
+      console.log(r)
+      return r
+    },
+    onRejected: r => {
+      console.error('error importing')
+      console.error(r)
+      return r
+    }
+  })

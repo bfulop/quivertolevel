@@ -17,3 +17,9 @@ key: 'note:' + noteid, value: notedata -> to get a note contents by id
 key: notebookid + ":" + timestamp + ":" + noteid, value: 0, -> to list the notes in a notebook
 key: 'notebook:' + timestamp of the latest note in the notebook + ":" + notebookid -> to list the notebooks (by date)
 ```
+
+### To run
+
+```
+$ node src/run
+```
