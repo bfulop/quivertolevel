@@ -1,42 +1,40 @@
-'use strict'
-
-const Task = require('data.task')
+const { of } = require('folktale/concurrency/task')
 const { List } = require('immutable-ext')
 
-describe('index', function () {
-  var subject
+const _processedNoteBook = 'shorts'
 
-  afterEach(function () {
-    td.reset()
-  })
+jest.mock('./processFolders')
+const processFolders = require('./processFolders')
+processFolders.mockReturnValue(
+  of(List.of(_processedNoteBook, _processedNoteBook))
+)
 
-  before('setting up stubs', function () {
-    const _processedNoteBook = 'shorts'
-    const processFolders = td.replace('./processFolders')
-    processFolders.processFolders = Task.of(
-      List.of(_processedNoteBook, _processedNoteBook)
-    )
+jest.mock('./flattenNoteBook')
+const flattenNoteBook = require('./flattenNoteBook')
+var flattenNOteBookCases = {
+  [_processedNoteBook]: of(List(['pants', 'pants']))
+}
+flattenNoteBook.mockImplementation(v => flattenNOteBookCases[v])
 
-    const flattenNoteBook = td.replace('./flattenNoteBook')
-    td
-      .when(flattenNoteBook(_processedNoteBook))
-      .thenReturn(Task.of(List(['pants', 'pants'])))
+jest.mock('./createKeys')
+const createKeys = require('./createKeys')
+const createKeysCases = { pants: 'shoes' }
+createKeys.mockImplementation(v => createKeysCases[v])
 
-    const createKeys = td.replace('./createKeys')
-    td.when(createKeys('pants')).thenReturn('shoes')
+jest.mock('./addToDB')
+const addToDB = require('./addToDB')
+const addToDBCases = { shoes: of('success') }
+addToDB.addNoteToDB.mockImplementation(v => addToDBCases[v])
 
-    const addToDB = td.replace('./addToDB')
-    td.when(addToDB.addNoteToDB('shoes')).thenReturn(Task.of('success'))
+var subject = require('./index')
 
-    subject = require('./index')
-  })
-
-  describe('adds notes to mongodb', function () {
-    it('gets back a list of notes to add', function () {
-      subject.upload.fork(console.error, t => {
-        console.log(insp(t))
-        expect(t).to.eql(['success', 'success', 'success', 'success' ])
-      })
+test('gets back a list of notes to add', done => {
+  subject()
+    .run()
+    .listen({
+      onResolved: t => {
+        expect(t).toEqual(['success', 'success', 'success', 'success'])
+        done()
+      }
     })
-  })
 })
