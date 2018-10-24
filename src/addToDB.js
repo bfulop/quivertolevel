@@ -24,7 +24,15 @@ const maybeAddNotebook = (anotebookkey, notebookkey) =>
   R.compose(
     R.ifElse(
       R.gt(getSecondId(anotebookkey)),
-      r => createNewNotebook(anotebookkey, notebookkey),
+      R.compose(
+        R.concat(createNewNotebook(anotebookkey, notebookkey)),
+        r => [r],
+        R.merge({type: 'del'}),
+        R.objOf('key'),
+        r => R.concat(r, R.concat(':', getFirstId(anotebookkey))),
+        R.concat('notebooks:'),
+        R.toString
+      ),
       r => []
     ),
     R.prop('updated_at')

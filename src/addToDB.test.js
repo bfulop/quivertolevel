@@ -16,6 +16,7 @@ get.mockImplementation(r => {
     }
   })
 })
+del.mockReturnValue(Promise.resolve('deleted'))
 const db = { get, batch, del }
 
 jest.mock('levelup')
@@ -139,6 +140,12 @@ describe('have to update the notebook dates', () => {
       type: 'put',
       key: 'nobook:older_nbookid',
       value: { updated_at: '203' }
+    })
+  })
+  test('deletes the older notebooks value', () => {
+    expect(batch.mock.calls[2][0]).toContainEqual({
+      type: 'del',
+      key: 'notebooks:101:older_nbookid'
     })
   })
 })
