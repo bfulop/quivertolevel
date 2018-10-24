@@ -29,20 +29,6 @@ const addNoteToDB = ({ notekey, anotebookkey, notebookkey, value }) => {
     .map(r => [r])
     .map(logger)
     .map(R.concat(baseinfo))
-    // .map(
-    //   R.ifElse(
-    //     R.isEmpty,
-    //     r => R.append(
-    //       {
-    //         type: 'put',
-    //         key: `nobook:new_nbookid`,
-    //         value: { updated_at: 112 }
-    //       },
-    //       baseinfo
-    //     ),
-    //     R.identity
-    //   )
-    // )
     .chain(batchT)
 }
 
