@@ -8,8 +8,10 @@ batch.mockReturnValue(Promise.resolve('inserted'))
 get.mockImplementation(r => {
   return new Promise((res, rej) => {
     if(r === 'nobook:new_nbookid') {
+      console.log('not found')
       rej('not found')
     } else {
+      console.log('found')
       res('done')
     }
   })
