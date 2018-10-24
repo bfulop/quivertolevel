@@ -12,7 +12,7 @@ get.mockImplementation(r => {
       rej('not found')
     } else {
       console.log('found')
-      res('done')
+      res({updated_at: 101})
     }
   })
 })
@@ -75,11 +75,11 @@ describe('simple case, new notebook to add', () => {
 })
 
 
-describe('notebook updated_at value is later', () => {
+describe('no need to update the notebook date', () => {
   beforeAll(done => {
     const simpleCase = {
       notekey: 'noteid',
-      anotebookkey: 'anotebook:fresher_nbookid:003:noteid',
+      anotebookkey: 'anotebook:fresher_nbookid:100:noteid',
       notebookkey: 'notebooks:100:fresher_nbookid',
       value: 'hats'
     }
@@ -105,6 +105,40 @@ describe('notebook updated_at value is later', () => {
       type: 'put',
       key: 'nobook:fresher_nbookid',
       value: { updated_at: 100 }
+    })
+  })
+})
+
+describe('have to update the notebook dates', () => {
+  beforeAll(done => {
+    const simpleCase = {
+      notekey: 'note3id',
+      anotebookkey: 'anotebook:older_nbookid:203:noteid',
+      notebookkey: 'notebooks:203:older_nbookid',
+      value: 'hats'
+    }
+    subject(simpleCase)
+      .run()
+      .listen({
+        onResolved: t => {
+          done()
+          return t
+        }
+      })
+  })
+
+  test('does update the sorted list of notebooks', () => {
+    expect(batch.mock.calls[2][0]).toContainEqual({
+      type: 'put',
+      key: 'notebooks:203:older_nbookid',
+      value: 0
+    })
+  })
+  test('does update the update_value', () => {
+    expect(batch.mock.calls[2][0]).toContainEqual({
+      type: 'put',
+      key: 'nobook:older_nbookid',
+      value: { updated_at: '203' }
     })
   })
 })

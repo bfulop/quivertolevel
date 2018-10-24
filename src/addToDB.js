@@ -20,14 +20,34 @@ const getT = fromPromised(safeGet)
 
 const createRecord = ({ key, val }) => ({ type: 'put', key: key, value: val })
 
-const latestNotebook = nobook => []
-const addNewNoteBook = R.map(createRecord)
+const maybeAddNotebook = (anotebookkey, notebookkey) =>
+  R.compose(
+    R.ifElse(
+      R.gt(getSecondId(anotebookkey)),
+      r => createNewNotebook(anotebookkey, notebookkey),
+      r => []
+    ),
+    R.prop('updated_at')
+  )
 
+const createNewNotebook = (anotebookkey, notebookkey) =>
+  R.map(createRecord)([
+    {
+      key: extractNotebookId(anotebookkey),
+      val: { updated_at: getFirstId(notebookkey) }
+    },
+    { key: notebookkey, val: 0 }
+  ])
+
+const getSecondId = R.compose(
+  R.nth(2),
+  R.split(':')
+)
 const getFirstId = R.compose(
   R.nth(1),
   R.split(':')
 )
-const createNobookId = R.compose(
+const extractNotebookId = R.compose(
   R.concat('nobook:'),
   getFirstId
 )
@@ -37,19 +57,9 @@ const addNoteToDB = ({ notekey, anotebookkey, notebookkey, value }) => {
     { type: 'put', key: notekey, value: 'hats' },
     { type: 'put', key: anotebookkey, value: 0 }
   ]
-  return getT(createNobookId(anotebookkey))
-    .map(r => r.map(latestNotebook))
-    .map(r =>
-      r.getOrElse(
-        R.map(createRecord)([
-          {
-            key: createNobookId(anotebookkey),
-            val: { updated_at: getFirstId(notebookkey) }
-          },
-          { key: notebookkey, val: 0 }
-        ])
-      )
-    )
+  return getT(extractNotebookId(anotebookkey))
+    .map(r => r.map(maybeAddNotebook(anotebookkey, notebookkey)))
+    .map(r => r.getOrElse(createNewNotebook(anotebookkey, notebookkey)))
     .map(R.concat(baseinfo))
     .chain(batchT)
 }
