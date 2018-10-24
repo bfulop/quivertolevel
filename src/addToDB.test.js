@@ -69,7 +69,42 @@ describe('simple case, new notebook to add', () => {
     expect(batch.mock.calls[0][0]).toContainEqual({
       type: 'put',
       key: 'nobook:new_nbookid',
-      value: { updated_at: 112 }
+      value: { updated_at: '112' }
+    })
+  })
+})
+
+
+describe('notebook updated_at value is later', () => {
+  beforeAll(done => {
+    const simpleCase = {
+      notekey: 'noteid',
+      anotebookkey: 'anotebook:fresher_nbookid:003:noteid',
+      notebookkey: 'notebooks:100:fresher_nbookid',
+      value: 'hats'
+    }
+    subject(simpleCase)
+      .run()
+      .listen({
+        onResolved: t => {
+          done()
+          return t
+        }
+      })
+  })
+
+  test('doesn NOT update the sorted list of notebooks', () => {
+    expect(batch.mock.calls[1][0]).not.toContainEqual({
+      type: 'put',
+      key: 'notebooks:100:fresher_nbookid',
+      value: 0
+    })
+  })
+  test('does NOT updates the update_value', () => {
+    expect(batch.mock.calls[1][0]).not.toContainEqual({
+      type: 'put',
+      key: 'nobook:fresher_nbookid',
+      value: { updated_at: 100 }
     })
   })
 })

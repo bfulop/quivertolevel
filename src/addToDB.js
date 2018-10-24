@@ -10,24 +10,46 @@ const logger = r => {
 }
 const db = levelup(leveldown('./testdb'))
 const safeGet = r => {
-  return db.get(r).then(Maybe.Just).catch(Maybe.Nothing)
+  return db
+    .get(r)
+    .then(Maybe.Just)
+    .catch(Maybe.Nothing)
 }
 const batchT = fromPromised(db.batch)
 const getT = fromPromised(safeGet)
 
-const createRecord = (k, v) => ({ type: 'put', key: k, value: v})
+const createRecord = ({ key, val }) => ({ type: 'put', key: key, value: val })
+
+const latestNotebook = nobook => []
+const addNewNoteBook = R.map(createRecord)
+
+const getFirstId = R.compose(
+  R.nth(1),
+  R.split(':')
+)
+const createNobookId = R.compose(
+  R.concat('nobook:'),
+  getFirstId
+)
 
 const addNoteToDB = ({ notekey, anotebookkey, notebookkey, value }) => {
   const baseinfo = [
     { type: 'put', key: notekey, value: 'hats' },
-    { type: 'put', key: anotebookkey, value: 0 },
-    { type: 'put', key: notebookkey, value: 0 }
+    { type: 'put', key: anotebookkey, value: 0 }
   ]
-  return getT('nobook:new_nbookid')
-    .map(r => r.map(t => createRecord('none', 0)))
-    .map(r => r.getOrElse(createRecord('nobook:new_nbookid', {updated_at: 112})))
-    .map(r => [r])
-    .map(logger)
+  return getT(createNobookId(anotebookkey))
+    .map(r => r.map(latestNotebook))
+    .map(r =>
+      r.getOrElse(
+        R.map(createRecord)([
+          {
+            key: createNobookId(anotebookkey),
+            val: { updated_at: getFirstId(notebookkey) }
+          },
+          { key: notebookkey, val: 0 }
+        ])
+      )
+    )
     .map(R.concat(baseinfo))
     .chain(batchT)
 }
