@@ -33,7 +33,10 @@ describe('simple case, new notebook to add', () => {
       notekey: 'noteid',
       anotebookkey: 'anotebook:new_nbookid:003:noteid',
       notebookkey: 'notebooks:112:new_nbookid',
-      value: { nbook: { name: 'nbookname' } }
+      value: {
+        nbook: { name: 'nbookname' },
+        note: { meta: { title: 'notetitle' } }
+      }
     }
     subject(simpleCase)
       .run()
@@ -49,21 +52,24 @@ describe('simple case, new notebook to add', () => {
     expect(batch.mock.calls[0][0]).toContainEqual({
       type: 'put',
       key: 'noteid',
-      value: { nbook: {name: 'nbookname'}}
+      value: {
+                nbook: { name: 'nbookname' },
+                note: { meta: { title: 'notetitle' } }
+              }
     })
   })
   test('inserts the note into its notebook, with its name as value', () => {
     expect(batch.mock.calls[0][0]).toContainEqual({
       type: 'put',
       key: 'anotebook:new_nbookid:003:noteid',
-      value: 'nbookname'
+      value: 'notetitle'
     })
   })
   test('inserts notebook into the sorted list', () => {
     expect(batch.mock.calls[0][0]).toContainEqual({
       type: 'put',
       key: 'notebooks:112:new_nbookid',
-      value: 0
+      value: 'nbookname'
     })
   })
   test('saves the latest update date for the notebook', () => {
@@ -131,7 +137,7 @@ describe('have to update the notebook dates', () => {
     expect(batch.mock.calls[2][0]).toContainEqual({
       type: 'put',
       key: 'notebooks:203:older_nbookid',
-      value: 0
+      value: undefined
     })
   })
   test('does update the update_value', () => {
