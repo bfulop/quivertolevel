@@ -15,7 +15,14 @@ const safeGet = r => {
     .then(Maybe.Just)
     .catch(Maybe.Nothing)
 }
-const batchT = fromPromised(db.batch)
+
+// const batchT = fromPromised(db.batch)
+const batchT = b => task(r => {
+  db.batch(b)
+  .then(r.resolve)
+  .catch(r.reject)
+})
+
 const getT = fromPromised(safeGet)
 
 const createRecord = ({ key, val }) => ({ type: 'put', key: key, value: val })
@@ -62,8 +69,8 @@ const extractNotebookId = R.compose(
 
 const addNoteToDB = ({ notekey, anotebookkey, notebookkey, value }) => {
   const baseinfo = [
-    { type: 'put', key: notekey, value: 'hats' },
-    { type: 'put', key: anotebookkey, value: 0 }
+    { type: 'put', key: notekey, value: value },
+    { type: 'put', key: anotebookkey, value: R.path(['nbook', 'name'], value) }
   ]
   return getT(extractNotebookId(anotebookkey))
     .map(r => r.map(maybeAddNotebook(anotebookkey, notebookkey)))

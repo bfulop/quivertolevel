@@ -5,7 +5,7 @@ jest.mock('./processNote')
 var processNote = require('./processNote')
 
 const readFileCases = {
-  'nbook/meta.json': of(JSON.stringify({ stuff: 'foo' }))
+  'nbook/meta.json': of(JSON.stringify({ nbookmeta: 'nmeta' }))
 }
 fileUtils.readFile.mockImplementation(v => readFileCases[v])
 
@@ -26,7 +26,7 @@ test('called with a notebook path', done => {
     .run()
     .listen({
       onResolved: t => {
-        expect(t.meta).toEqual({ stuff: 'foo' })
+        expect(t.meta).toEqual({  nbookmeta: 'nmeta' })
         done()
       }
     })
@@ -39,7 +39,7 @@ test('notesdatae', done => {
       onResolved: t => {
         t.notesData[0].run().listen({
           onResolved: r => {
-            expect(t.meta).toEqual({ stuff: 'foo' })
+            expect(t.meta).toEqual({  nbookmeta: 'nmeta' })
             done()
           }
         })

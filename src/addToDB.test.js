@@ -12,7 +12,7 @@ get.mockImplementation(r => {
       rej('not found')
     } else {
       console.log('found')
-      res({updated_at: 101})
+      res({ updated_at: 101 })
     }
   })
 })
@@ -33,7 +33,7 @@ describe('simple case, new notebook to add', () => {
       notekey: 'noteid',
       anotebookkey: 'anotebook:new_nbookid:003:noteid',
       notebookkey: 'notebooks:112:new_nbookid',
-      value: 'hats'
+      value: { nbook: { name: 'nbookname' } }
     }
     subject(simpleCase)
       .run()
@@ -49,14 +49,14 @@ describe('simple case, new notebook to add', () => {
     expect(batch.mock.calls[0][0]).toContainEqual({
       type: 'put',
       key: 'noteid',
-      value: 'hats'
+      value: { nbook: {name: 'nbookname'}}
     })
   })
-  test('inserts the note into its notebook', () => {
+  test('inserts the note into its notebook, with its name as value', () => {
     expect(batch.mock.calls[0][0]).toContainEqual({
       type: 'put',
       key: 'anotebook:new_nbookid:003:noteid',
-      value: 0
+      value: 'nbookname'
     })
   })
   test('inserts notebook into the sorted list', () => {
@@ -74,7 +74,6 @@ describe('simple case, new notebook to add', () => {
     })
   })
 })
-
 
 describe('no need to update the notebook date', () => {
   beforeAll(done => {
