@@ -14,8 +14,8 @@ The format of the LevelDB records is the following:
 
 ```
 key: 'note:' + noteid, value: notedata -> to get a note contents by id
-key: 'anotebook' + notebookid + ":" + timestamp + ":" + noteid, value: 'note title', -> to list the notes in a notebook
-key: 'notebooks:' + timestamp of the latest note in the notebook + ":" + notebookid, value: 'notebook name' -> to list the notebooks (by date)
+key: 'anotebook' + notebookid + ":" + timestamp + ":" + noteid, value: {title: 'note title'}, -> to list the notes in a notebook
+key: 'notebooks:' + timestamp of the latest note in the notebook + ":" + notebookid, value: {name: 'notebook name'} -> to list the notebooks (by date)
 ```
 The note contents will be (see `processNote.js`):
 

@@ -6,3 +6,4 @@ node_modules
 /src/testdb
 *.vim
 .ldb_history
+quiverdb

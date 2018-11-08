@@ -8,10 +8,8 @@ batch.mockReturnValue(Promise.resolve('inserted'))
 get.mockImplementation(r => {
   return new Promise((res, rej) => {
     if (r === 'nobook:new_nbookid') {
-      console.log('not found')
       rej('not found')
     } else {
-      console.log('found')
       res({ updated_at: 101 })
     }
   })
@@ -53,23 +51,23 @@ describe('simple case, new notebook to add', () => {
       type: 'put',
       key: 'noteid',
       value: {
-                nbook: { name: 'nbookname' },
-                note: { meta: { title: 'notetitle' } }
-              }
+        nbook: { name: 'nbookname' },
+        note: { meta: { title: 'notetitle' } }
+      }
     })
   })
   test('inserts the note into its notebook, with its name as value', () => {
     expect(batch.mock.calls[0][0]).toContainEqual({
       type: 'put',
       key: 'anotebook:new_nbookid:003:noteid',
-      value: 'notetitle'
+      value: {title: 'notetitle'}
     })
   })
   test('inserts notebook into the sorted list', () => {
     expect(batch.mock.calls[0][0]).toContainEqual({
       type: 'put',
       key: 'notebooks:112:new_nbookid',
-      value: 'nbookname'
+      value: {name: 'nbookname'}
     })
   })
   test('saves the latest update date for the notebook', () => {
@@ -137,7 +135,7 @@ describe('have to update the notebook dates', () => {
     expect(batch.mock.calls[2][0]).toContainEqual({
       type: 'put',
       key: 'notebooks:203:older_nbookid',
-      value: undefined
+      value: {name: undefined}
     })
   })
   test('does update the update_value', () => {
