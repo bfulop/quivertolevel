@@ -39,10 +39,9 @@ const maybeAddNotebook = (anotebookkey, notebookkey, value) =>
         R.merge({ type: 'del' }),
         R.objOf('key'),
         r => R.concat(r, R.concat(':', getFirstId(anotebookkey))),
-        R.concat('notebooks:'),
-        R.toString
+        R.concat('notebooks:')
       ),
-      r => []
+      () => []
     ),
     R.prop('updated_at')
   )
@@ -94,9 +93,5 @@ const addNoteToDB = ({ notekey, anotebookkey, notebookkey, value }) => {
     .chain(batchT)
 }
 
-const addNoteBookToDB = r => {
-  console.log('notebook added', r)
-  return of('success')
-}
 
-module.exports = { addNoteToDB, addNoteBookToDB }
+module.exports = { addNoteToDB }

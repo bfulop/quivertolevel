@@ -101,7 +101,7 @@ describe('no need to update the notebook date', () => {
     expect(batch.mock.calls[1][0]).not.toContainEqual({
       type: 'put',
       key: 'notebooks:100:fresher_nbookid',
-      value: 0
+      value: {name: undefined}
     })
   })
   test('does NOT updates the update_value', () => {
