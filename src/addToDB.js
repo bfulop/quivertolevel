@@ -54,10 +54,7 @@ const createNewNotebook = (anotebookkey, notebookkey, value) =>
     },
     {
       key: notebookkey,
-      val: R.compose(
-        R.objOf('name'),
-        R.path(['nbook', 'name'])
-      )(value)
+      val: R.prop('nbook', value)
     }
   ])
 
@@ -74,9 +71,23 @@ const extractNotebookId = R.compose(
   getFirstId
 )
 
-const addNoteToDB = ({ notekey, anotebookkey, notebookkey, value }) => {
+const addNoteToDB = ({
+  anotekey,
+  noteskey,
+  anotebookkey,
+  notebookkey,
+  value
+}) => {
   const baseinfo = [
-    { type: 'put', key: notekey, value: value },
+    { type: 'put', key: anotekey, value: value },
+    {
+      type: 'put',
+      key: noteskey,
+      value: R.compose(
+        R.objOf('title'),
+        R.path(['note', 'meta', 'title'])
+      )(value)
+    },
     {
       type: 'put',
       key: anotebookkey,
@@ -92,6 +103,5 @@ const addNoteToDB = ({ notekey, anotebookkey, notebookkey, value }) => {
     .map(R.concat(baseinfo))
     .chain(batchT)
 }
-
 
 module.exports = { addNoteToDB }

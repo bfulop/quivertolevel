@@ -1,7 +1,10 @@
 const createkey = ndata =>
   Object.assign(
     {
-      notekey: `note:${ndata.note.meta.uuid}`
+      anotekey: `anote:${ndata.note.meta.uuid}`
+    },
+    {
+      noteskey: `notes:${ndata.note.meta.created_at}:${ndata.note.meta.uuid}`
     },
     {
       anotebookkey: `anotebook:${ndata.nbook.uuid}:${
@@ -11,7 +14,7 @@ const createkey = ndata =>
     {
       notebookkey: `notebooks:${ndata.note.meta.updated_at}:${ndata.nbook.uuid}`
     },
-    { value: ndata },
+    { value: ndata }
   )
 
 module.exports = createkey

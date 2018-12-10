@@ -13,9 +13,10 @@ Needs a `config.json` file to get the path to your Quiver library.
 The format of the LevelDB records is the following:
 
 ```
-key: 'note:' + noteid, value: notedata -> to get a note contents by id
+key: 'anote:' + noteid, value: notedata -> to get a note contents by id
+key: 'notes:' + timestamp + ":" + noteid, value: {title: 'note title'} -> list all the notes
 key: 'anotebook' + notebookid + ":" + timestamp + ":" + noteid, value: {title: 'note title'}, -> to list the notes in a notebook
-key: 'notebooks:' + timestamp of the latest note in the notebook + ":" + notebookid, value: {name: 'notebook name'} -> to list the notebooks (by date)
+key: 'notebooks:' + timestamp of the latest note in the notebook + ":" + notebookid, value: {name: 'notebook name', uuid: 'notebookid'} -> to list the notebooks (by date)
 ```
 The note contents will be (see `processNote.js`):
 
