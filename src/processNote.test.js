@@ -8,17 +8,32 @@ const readFileCases = {
 }
 fileUtils.readFile.mockImplementation(v => readFileCases[v])
 
-test('returns a single Task', done => {
-  var subject = require('./processNote')
-  subject('foo')
-    .run()
-    .listen({
-      onResolved: t => {
-        expect(t).toEqual({
-          meta: { shirts: 'pink' },
-          content: { shoes: 'white' }
-        })
-        done()
-      }
+jest.mock('./addTags')
+const { addTags } = require('./addTags')
+addTags.mockReturnValue(of('processedNote'))
+
+describe('processing a Note', () => {
+  let launch
+  beforeAll(done => {
+    var subject = require('./processNote')
+    launch = subject('foo').run()
+    launch.listen({
+      onResolved: () => done()
     })
+
+  })
+  test('calls addTags with all the data', () => {
+    expect(addTags).toHaveBeenCalledWith({
+      meta: { shirts: 'pink' },
+      content: { shoes: 'white' }
+    })
+  })
+  test('returns a single Task', () => {
+      launch
+      .listen({
+        onResolved: t => {
+          expect(t).toEqual('processedNote')
+        }
+      })
+  })
 })

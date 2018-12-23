@@ -81,6 +81,7 @@ describe('simple case, new notebook to add', () => {
 
 describe('no need to update the notebook date', () => {
   beforeAll(done => {
+    addTags.mockReturnValue(of('processedNote'))
     const simpleCase = {
       notekey: 'noteid',
       anotebookkey: 'anotebook:fresher_nbookid:100:noteid',
