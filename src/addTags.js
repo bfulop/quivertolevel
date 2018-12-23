@@ -72,9 +72,10 @@ const getAllTags = dict =>
     addAllTags(dict)
   )
 
-// console.log(getAllTags(config.dictionary)(content))
+const concatAll_ = R.unapply(R.reduce(R.concat, []))
 const getTagsEveryWhere = dict =>
-    R.converge(R.concat, [
+    R.converge(concatAll_, [
+      R.view(R.lensPath(['meta', 'tags'])),
       R.compose(
         getTagsC(dict),
         R.objOf('data'),

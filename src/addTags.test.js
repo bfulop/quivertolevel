@@ -19,7 +19,7 @@ getconfig.mockReturnValue(
 
 const notedata = {
   meta: {
-    tags: []
+    tags: ['starttag']
   },
   content: {
     title: 'shoes pants shirts tag1 tag2 relatedtg5',
@@ -58,6 +58,11 @@ describe('calculating the tags', () => {
     subject.map(r => {
       expect(r.meta.tags).toContain('tag2')
       expect(r.meta.tags).toContain('tag4')
+    })
+  })
+  test('keeps the starting tag', () => {
+    subject.map(r => {
+      expect(r.meta.tags).toContain('starttag')
     })
   })
 })
