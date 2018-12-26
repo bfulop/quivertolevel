@@ -9,8 +9,8 @@ const readFileCases = {
 fileUtils.readFile.mockImplementation(v => readFileCases[v])
 
 jest.mock('./addTags')
-const { addTags } = require('./addTags')
-addTags.mockReturnValue(of('processedNote'))
+const { findTags } = require('./addTags')
+findTags.mockReturnValue(of('processedNote'))
 
 describe('processing a Note', () => {
   let launch
@@ -23,7 +23,7 @@ describe('processing a Note', () => {
 
   })
   test('calls addTags with all the data', () => {
-    expect(addTags).toHaveBeenCalledWith({
+    expect(findTags).toHaveBeenCalledWith({
       meta: { shirts: 'pink' },
       content: { shoes: 'white' }
     })

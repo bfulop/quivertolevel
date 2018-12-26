@@ -10,7 +10,7 @@ get.mockImplementation(r => {
     if (r === 'nobook:new_nbookid') {
       rej('not found')
     } else {
-      res({ updated_at: 101 })
+      res({ updated_at: '101' })
     }
   })
 })
@@ -28,7 +28,7 @@ var subject = require('./addToDB').addNoteToDB
 describe('simple case, new notebook to add', () => {
   beforeAll(done => {
     const simpleCase = {
-      notekey: 'noteid',
+      anotekey: 'noteid',
       anotebookkey: 'anotebook:new_nbookid:003:noteid',
       notebookkey: 'notebooks:112:new_nbookid',
       value: {
@@ -81,7 +81,6 @@ describe('simple case, new notebook to add', () => {
 
 describe('no need to update the notebook date', () => {
   beforeAll(done => {
-    addTags.mockReturnValue(of('processedNote'))
     const simpleCase = {
       notekey: 'noteid',
       anotebookkey: 'anotebook:fresher_nbookid:100:noteid',
@@ -117,7 +116,7 @@ describe('no need to update the notebook date', () => {
 describe('have to update the notebook dates', () => {
   beforeAll(done => {
     const simpleCase = {
-      notekey: 'note3id',
+      anotekey: 'note3id',
       anotebookkey: 'anotebook:older_nbookid:203:noteid',
       notebookkey: 'notebooks:203:older_nbookid',
       value: 'hats'
@@ -136,7 +135,7 @@ describe('have to update the notebook dates', () => {
     expect(batch.mock.calls[2][0]).toContainEqual({
       type: 'put',
       key: 'notebooks:203:older_nbookid',
-      value: {name: undefined}
+      value: undefined
     })
   })
   test('does update the update_value', () => {

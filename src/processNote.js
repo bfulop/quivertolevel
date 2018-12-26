@@ -1,6 +1,6 @@
 const fileUtils = require('./utils/fileUtils')
 const { task } = require('folktale/concurrency/task')
-const { addTags } = require('./addTags')
+const { findTags } = require('./addTags')
 
 const noteData = ([meta, content]) =>
   Object.assign({}, { meta: meta }, { content: content })
@@ -15,6 +15,6 @@ const processNote = npath =>
   getNoteMeta(npath)
     .and(getNoteContents(npath))
     .map(noteData)
-    .chain(addTags)
+    .chain(findTags)
 
 module.exports = processNote

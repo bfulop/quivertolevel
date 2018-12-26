@@ -9,13 +9,13 @@ const logger = r => {
   console.log('r', r)
   return r
 }
-const db = level('./quiverdb', { valueEncoding: 'json' })
-const safeGet = r => {
-  return db
+
+const db = levelup(leveldown('./quiverdb', { valueEncoding: 'json' }))
+const safeGet = r =>
+  db
     .get(r)
     .then(Maybe.Just)
     .catch(Maybe.Nothing)
-}
 
 // const batchT = fromPromised(db.batch)
 const batchT = b =>
