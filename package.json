@@ -21,6 +21,7 @@
   "author": "Balint Fulop <bfulop@mac.com> (http://abundancia.io/)",
   "license": "MIT",
   "dependencies": {
+    "encoding-down": "^6.0.1",
     "folktale": "^2.3.1",
     "immutable": "^3.8.2",
     "immutable-ext": "^1.1.5",

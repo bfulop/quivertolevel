@@ -2,6 +2,7 @@ const { task, of, fromPromised } = require('folktale/concurrency/task')
 const Maybe = require('folktale/maybe')
 const levelup = require('levelup')
 const level = require('level')
+const encode = require('encoding-down')
 const leveldown = require('leveldown')
 const R = require('ramda')
 
@@ -10,7 +11,8 @@ const logger = r => {
   return r
 }
 
-const db = levelup(leveldown('./quiverdb', { valueEncoding: 'json' }))
+const db = levelup(encode(leveldown('./quiverdb'), { valueEncoding: 'json' }))
+// const db = level('./quiverdb', { valueEncoding: 'json' })
 const safeGet = r =>
   db
     .get(r)
