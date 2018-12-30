@@ -5,6 +5,7 @@ const level = require('level')
 const encode = require('encoding-down')
 const leveldown = require('leveldown')
 const R = require('ramda')
+const insertTags = require('./insertTags')
 
 const logger = r => {
   console.log('r', r)
@@ -103,6 +104,7 @@ const addNoteToDB = ({
     .map(r => r.map(maybeAddNotebook(anotebookkey, notebookkey, value)))
     .map(r => r.getOrElse(createNewNotebook(anotebookkey, notebookkey, value)))
     .map(R.concat(baseinfo))
+    .chain(insertTags)
     .chain(batchT)
 }
 

@@ -20,8 +20,13 @@ const db = { get, batch, del }
 jest.mock('levelup')
 const levelup = require('levelup')
 levelup.mockReturnValue(db)
+
 jest.mock('./processANotebook')
 var processANotebook = require('./processANotebook')
+
+jest.mock('./insertTags')
+const insertTags = require('./insertTags')
+insertTags.mockImplementation(r => of(r))
 
 var subject = require('./addToDB').addNoteToDB
 
