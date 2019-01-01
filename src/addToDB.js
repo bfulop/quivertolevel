@@ -5,16 +5,17 @@ const encode = require('encoding-down')
 const leveldown = require('leveldown')
 const R = require('ramda')
 const insertTags = require('./insertTags')
+const db = require('./utils/db')
 
 const logger = r => {
   console.log('r', r)
   return r
 }
 
-const db = levelup(encode(leveldown('./quiverdb'), { valueEncoding: 'json' }))
+// const db = levelup(encode(leveldown('./quiverdb'), { valueEncoding: 'json' }))
 // const db = level('./quiverdb', { valueEncoding: 'json' })
 const safeGet = r =>
-  db
+  db()
     .get(r)
     .then(Maybe.Just)
     .catch(Maybe.Nothing)
@@ -22,7 +23,7 @@ const safeGet = r =>
 // const batchT = fromPromised(db.batch)
 const batchT = b =>
   task(r => {
-    db.batch(b)
+    db().batch(b)
       .then(r.resolve)
       .catch(r.reject)
   })

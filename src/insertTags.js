@@ -4,6 +4,7 @@ const Maybe = require('folktale/maybe')
 const levelup = require('levelup')
 const encode = require('encoding-down')
 const leveldown = require('leveldown')
+const db = require('./utils/db')
 
 const logger = r => {
   console.log('----------------------------')
@@ -11,10 +12,10 @@ const logger = r => {
   return r
 }
 
-const db = levelup(encode(leveldown('./quiverdb'), { valueEncoding: 'json' }))
+// const db = levelup(encode(leveldown('./quiverdb'), { valueEncoding: 'json' }))
 
 const safeGet = r =>
-  db
+  db()
     .get(r)
     .then(Maybe.Just)
     .catch(Maybe.Nothing)

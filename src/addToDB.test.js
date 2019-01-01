@@ -21,6 +21,10 @@ jest.mock('levelup')
 const levelup = require('levelup')
 levelup.mockReturnValue(db)
 
+jest.mock('./utils/db')
+const getDb = require('./utils/db')
+getDb.mockReturnValue(db)
+
 jest.mock('./processANotebook')
 var processANotebook = require('./processANotebook')
 
