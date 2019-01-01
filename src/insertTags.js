@@ -21,25 +21,7 @@ const safeGet = r =>
 
 const getT = fromPromised(safeGet)
 
-const getATag = R.compose(
-  R.map(r =>
-    r.getOrElse({
-      type: 'put',
-      key: 'tags:tag001',
-      value: {
-        notes: ['note001']
-      }
-    })
-  ),
-  getT
-)
-const prepareTags = R.compose(
-  getATag,
-  R.head(),
-  R.path(['value', 'note', 'meta', 'tags']),
-  R.find(R.propSatisfies(R.match(/^anote:/), 'key'))
-)
-const tagsRelated = {
+const tagsRelatedValues = {
   key: R.compose(
     R.nth(1),
     R.split(':')
@@ -48,27 +30,30 @@ const tagsRelated = {
 }
 const prepareTagData = R.compose(
   R.pick(['key', 'value']),
-  R.evolve(tagsRelated),
+  R.evolve(tagsRelatedValues),
   R.find(R.propSatisfies(R.match(/^anote:/), 'key'))
 )
 
-const getTags = id =>
+const prepareTag = noteId =>
   R.converge(
     (tagT, tagId) =>
       tagT.map(r =>
-        r.getOrElse({
-          key: tagId,
-          value: []
-        })
+        r.orElse(() => Maybe.Just({
+          notes: [],
+          siblings: []
+        }))
+        .map(R.over(R.lensProp('notes'), R.append(noteId)))
+        .map(R.objOf('value'))
+        .map(R.assoc('type', 'put'))
+        .map(R.assoc('key', R.concat('tags:', tagId)))
+        .getOrElse('what?')
       ),
     [getT, R.identity]
   )
 
-// const getTags = id => tag => of(id)
-
 const createTags = R.compose(
   waitAll,
-  ([id, tags]) => tags.map(getTags(id)),
+  ([id, tags]) => tags.map(prepareTag(id)),
   R.values,
   prepareTagData
 )

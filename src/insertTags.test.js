@@ -5,7 +5,10 @@ get.mockImplementation(r => {
   return new Promise((res, rej) => {
     switch (r) {
       case 'tag003':
-        res('blah')
+        res({
+          notes: ['anote001'],
+          siblings: []
+        })
         break
       default:
         rej('not fond')
@@ -58,7 +61,8 @@ describe('simple case, new tag to add', () => {
       type: 'put',
       key: 'tags:tag001',
       value: {
-        notes: ['note001']
+        notes: ['note001'],
+        siblings: []
       }
     })
   })
