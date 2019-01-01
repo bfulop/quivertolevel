@@ -34,7 +34,7 @@ const prepareTagData = R.compose(
   R.find(R.propSatisfies(R.match(/^anote:/), 'key'))
 )
 
-const prepareTag = noteId =>
+const prepareTag = (noteId, tags) =>
   R.converge(
     (tagT, tagId) =>
       tagT.map(r =>
@@ -43,17 +43,18 @@ const prepareTag = noteId =>
           siblings: []
         }))
         .map(R.over(R.lensProp('notes'), R.append(noteId)))
+        .map(R.over(R.lensProp('siblings'), R.concat(R.without([tagId], tags))))
         .map(R.objOf('value'))
         .map(R.assoc('type', 'put'))
         .map(R.assoc('key', R.concat('tags:', tagId)))
         .getOrElse('what?')
       ),
-    [getT, R.identity]
+    [R.compose(getT, R.concat('tags:')), R.identity]
   )
 
 const createTags = R.compose(
   waitAll,
-  ([id, tags]) => tags.map(prepareTag(id)),
+  ([id, tags]) => tags.map(prepareTag(id, tags)),
   R.values,
   prepareTagData
 )

@@ -4,10 +4,10 @@ const get = jest.fn()
 get.mockImplementation(r => {
   return new Promise((res, rej) => {
     switch (r) {
-      case 'tag003':
+      case 'tags:tag003':
         res({
-          notes: ['anote001'],
-          siblings: []
+          notes: ['somenote'],
+          siblings: ['sometag']
         })
         break
       default:
@@ -56,13 +56,46 @@ describe('simple case, new tag to add', () => {
   test('contains unimportant elements', () => {
     expect(result).toContain(otherstuff)
   })
-  test('puts new tag', () =>{
+  test('puts new tag', () => {
     expect(result).toContainEqual({
       type: 'put',
       key: 'tags:tag001',
       value: {
         notes: ['note001'],
-        siblings: []
+        siblings: ['tag002']
+      }
+    })
+  })
+})
+describe('updates existing tag', () => {
+  let result
+  const note2 = {
+    key: 'anote:note002',
+    value: {
+      note: {
+        meta: {
+          tags: ['tag003', 'tag004']
+        }
+      }
+    }
+  }
+  beforeAll(done => {
+    const simpleCase = [note2]
+    subject(simpleCase)
+      .run()
+      .future()
+      .map(r => {
+        result = r
+        done()
+      })
+  })
+  test('updates tag', () => {
+    expect(result).toContainEqual({
+      type: 'put',
+      key: 'tags:tag003',
+      value: {
+        notes: ['somenote', 'note002'],
+        siblings: ['tag004', 'sometag']
       }
     })
   })
