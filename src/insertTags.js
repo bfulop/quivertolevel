@@ -35,22 +35,41 @@ const prepareTagData = R.compose(
   R.find(R.propSatisfies(R.match(/^anote:/), 'key'))
 )
 
-const prepareTag = (noteId, tags) =>
+const incCount = (k, l, r) => (k == 'count' ? r + 1 : r)
+
+const updateSiblingsList = tagId =>
+  R.compose(
+    R.mergeDeepWithKey(incCount),
+    R.fromPairs,
+    R.map(R.pair(R.__, { count: 1, child: false })),
+    R.reject(R.equals(tagId))
+  )
+
+const prepareTag = (noteId, tagxs) =>
   R.converge(
     (tagT, tagId) =>
       tagT.map(r =>
-        r.orElse(() => Maybe.Just({
-          notes: [],
-          siblings: []
-        }))
-        .map(R.over(R.lensProp('notes'), R.append(noteId)))
-        .map(R.over(R.lensProp('siblings'), R.concat(R.without([tagId], tags))))
-        .map(R.objOf('value'))
-        .map(R.assoc('type', 'put'))
-        .map(R.assoc('key', R.concat('tags:', tagId)))
-        .getOrElse('what?')
+        r
+          .orElse(() =>
+            Maybe.Just({
+              notes: [],
+              siblings: {}
+            })
+          )
+          .map(R.over(R.lensProp('notes'), R.append(noteId)))
+          .map(R.over(R.lensProp('siblings'), updateSiblingsList(tagId)(tagxs)))
+          .map(R.objOf('value'))
+          .map(R.assoc('type', 'put'))
+          .map(R.assoc('key', R.concat('tags:', tagId)))
+          .getOrElse('what?')
       ),
-    [R.compose(getT, R.concat('tags:')), R.identity]
+    [
+      R.compose(
+        getT,
+        R.concat('tags:')
+      ),
+      R.identity
+    ]
   )
 
 const createTags = R.compose(

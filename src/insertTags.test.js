@@ -1,3 +1,4 @@
+const R = require('ramda')
 const { of } = require('folktale/concurrency/task')
 
 const get = jest.fn()
@@ -7,7 +8,10 @@ get.mockImplementation(r => {
       case 'tags:tag003':
         res({
           notes: ['somenote'],
-          siblings: ['sometag']
+          siblings: {
+            sometag: { count: 1, child: false },
+            existingtag: { count: 4, child: false }
+          }
         })
         break
       default:
@@ -61,14 +65,22 @@ describe('simple case, new tag to add', () => {
     expect(result).toContain(otherstuff)
   })
   test('puts new tag', () => {
-    expect(result).toContainEqual({
+    let r = R.find(R.propEq('key', 'tags:tag001'), result)
+    expect(r).toMatchObject({
       type: 'put',
-      key: 'tags:tag001',
+      key: 'tags:tag001'
+    })
+    expect(r).toMatchObject({
       value: {
         notes: ['note001'],
-        siblings: ['tag002']
+        siblings: { tag002: { count: 1, child: false } }
       }
     })
+
+    // expect(result).toContainEqual({
+    //   type: 'put',
+    //   key: 'tags:tag001',
+    // })
   })
 })
 describe('updates existing tag', () => {
@@ -78,7 +90,7 @@ describe('updates existing tag', () => {
     value: {
       note: {
         meta: {
-          tags: ['tag003', 'tag004']
+          tags: ['tag003', 'tag004', 'existingtag']
         }
       }
     }
@@ -94,12 +106,15 @@ describe('updates existing tag', () => {
       })
   })
   test('updates tag', () => {
-    expect(result).toContainEqual({
-      type: 'put',
-      key: 'tags:tag003',
+    let r = R.find(R.propEq('key', 'tags:tag003'), result)
+    expect(r).toMatchObject({
       value: {
         notes: ['somenote', 'note002'],
-        siblings: ['tag004', 'sometag']
+        siblings: {
+          tag004: { count: 1, child: false },
+          sometag: { count: 1, child: false },
+          existingtag: { count: 5, child: false}
+        }
       }
     })
   })
