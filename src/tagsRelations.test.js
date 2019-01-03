@@ -54,7 +54,10 @@ describe('processing tag001', () => {
       done()
     })
   })
-  test('tag becomes parent', () => {
-    expect(result[0]).toEqual('tag001')
+  test('complete tag data is preserved', () => {
+    expect(result[0]).toMatchObject({hats:'shoes'})
+  })
+  test('child property updated', () => {
+    expect(result[0]).toMatchObject({siblings:{tag002:{child: true}}})
   })
 })
