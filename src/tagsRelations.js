@@ -17,10 +17,36 @@ const safeGet = r =>
 
 const getT = fromPromised(safeGet)
 
-const processSibling = tag => R.over(R.lensProp('child'), () => true)
+const addChildRatio = length =>
+  R.converge(R.assoc('ratio'), [
+    R.compose(
+      R.divide(length),
+      R.prop('count')
+    ),
+    R.identity
+  ])
 
-const processTagOld = tag =>
-  R.over(R.lensProp('siblings'), R.map(processSibling(tag)), tag)
+const calcChildState = R.converge(
+  R.set(R.lensProp('child')),
+  [
+    R.converge(R.gte, [R.prop('ratio'), R.prop('childratio')]),
+    R.identity
+  ]
+)
+
+const setChildState = length => R.compose(calcChildState, addChildRatio(length))
+
+const calcRatios = R.converge(
+  (length, tag) =>
+    R.over(R.lensProp('siblings'), R.map(setChildState(length)), tag),
+  [
+      R.compose(
+        R.length,
+        R.prop('notes')
+      ),
+      R.identity
+    ]
+)
 
 const calcRatio = tagName =>
   R.converge(R.divide, [
@@ -43,26 +69,32 @@ const getRatio = tagName =>
     )
   ])
 
-const processTagTask = tagName => 
-  R.converge((tag, ratiosT) => ratiosT.map(R.mergeDeepWith(R.assoc('childratio'), R.__, tag)),
+const processTagTask = tagName =>
+  R.converge(
+    (tag, ratiosT) =>
+      ratiosT.map(R.mergeDeepWith(R.assoc('childratio'), R.__, tag)),
     [
-    R.identity,
-    R.compose(
-      R.map(R.objOf('siblings')),
-      R.map(R.fromPairs),
-      waitAll,
-      R.map(waitAll),
-      R.map(getRatio(tagName)),
-      R.keys,
-      R.prop('siblings')
-    )
-  ])
+      R.identity,
+      R.compose(
+        R.map(R.objOf('siblings')),
+        R.map(R.fromPairs),
+        waitAll,
+        R.map(waitAll),
+        R.map(getRatio(tagName)),
+        R.keys,
+        R.prop('siblings')
+      )
+    ]
+  )
 
 const processRelations = tagName =>
   R.compose(
     waitAll,
+    R.map(task => task.map(calcRatios)),
     R.map(task =>
-      task.chain(maybe => maybe.map(processTagTask(tagName)).getOrElse(of('hoho')))
+      task.chain(maybe =>
+        maybe.map(processTagTask(tagName)).getOrElse(of(null))
+      )
     ),
     R.map(getT),
     R.map(R.concat('tags:'))
