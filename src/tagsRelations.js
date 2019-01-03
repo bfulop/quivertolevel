@@ -87,18 +87,22 @@ const processTagTask = tagName =>
     ]
   )
 
-const processRelations = tagName =>
+const processRelations = 
   R.compose(
     waitAll,
-    R.map(task => task.map(calcRatios)),
+    R.map(task => task
+      .map(calcRatios)
+      .map(R.assoc('type', 'put'))
+      // .map(R.assoc('key', R.concat('tags:', tagName)))
+    ),
     R.map(task =>
       task.chain(maybe =>
-        maybe.map(processTagTask(tagName)).getOrElse(of(null))
+        maybe.map(processTagTask('tag001')).getOrElse(of(null))
       )
     ),
     R.map(getT),
     R.map(R.concat('tags:'))
-  )(tagName)
+  )
 
 const calcRelations = processRelations
 

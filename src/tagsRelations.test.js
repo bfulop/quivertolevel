@@ -60,4 +60,10 @@ describe('processing tag001', () => {
   test('child property updated', () => {
     expect(result[0]).toMatchObject({siblings:{tag002:{child: true}}})
   })
+  test.skip('adds leveldb instruction', () => {
+    expect(result[0]).toMatchObject({
+      type: 'put',
+      key: 'tags:tag001'
+    })
+  })
 })
