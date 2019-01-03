@@ -1,9 +1,6 @@
 const R = require('ramda')
 const { task, of, fromPromised, waitAll } = require('folktale/concurrency/task')
 const Maybe = require('folktale/maybe')
-const levelup = require('levelup')
-const encode = require('encoding-down')
-const leveldown = require('leveldown')
 const db = require('./utils/db')
 
 const logger = r => {
