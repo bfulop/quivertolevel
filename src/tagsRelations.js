@@ -37,6 +37,11 @@ const setChildState = length =>
     addChildRatio(length)
   )
 
+const addSize = R.converge(R.assoc('size'), [
+  R.compose(R.length, R.prop('notes')),
+  R.identity
+])
+
 const calcParentRatio = R.converge(R.assoc('parentratio'), [
   R.converge(
     R.subtract, [
@@ -113,6 +118,7 @@ const processRelations = R.compose(
     task
       .map(calcRatios)
       .map(calcParentRatio)
+      .map(addSize)
       .map(R.objOf('value'))
       .map(R.assoc('type', 'put'))
       .map(R.assoc('key', R.concat('tags:', tagname)))

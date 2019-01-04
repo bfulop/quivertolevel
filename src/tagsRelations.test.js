@@ -79,6 +79,11 @@ describe('processing tag001', () => {
       value: { parentratio: 2 }
     })
   })
+  test('adds notes size', () => {
+    expect(result[0]).toMatchObject({
+      value: { size: 6 }
+    })
+  })
   test('adds leveldb instruction', () => {
     expect(result[0]).toMatchObject({
       type: 'put',
