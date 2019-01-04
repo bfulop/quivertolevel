@@ -5,12 +5,20 @@ const tag001data = {
   notes: ['pants1', 'pants2', 'pants3', 'pants4', 'pants5', 'pants6'],
   hats: 'shoes',
   siblings: {
-    tag002: { count: 1, child: false }
+    tag002: { count: 1, child: false },
+    tag003: { count: 3, child: false }
   }
 }
 
 const tag002data = {
-  notes: ['shoes1', 'shoes2', 'shoes3', 'shoes4'],
+  notes: ['pants1', 'pants2', 'pants3', 'pants4'],
+  siblings: {
+    tag001: { count: 1, child: false }
+  }
+}
+
+const tag003data = {
+  notes: ['pants1', 'pants2', 'pants3', 'pants4'],
   siblings: {
     tag001: { count: 3, child: false }
   }
@@ -25,6 +33,9 @@ get.mockImplementation(r => {
         break
       case 'tags:tag002':
         res(tag002data)
+        break
+      case 'tags:tag003':
+        res(tag003data)
         break
       default:
         rej('not fond')
@@ -47,7 +58,7 @@ describe('processing tag001', () => {
   let result
   beforeAll(done => {
     subject
-      .processRelations(['tag001'])
+      .processRelations(['tags:tag001'])
       .run()
       .future()
       .map(r => {
@@ -61,6 +72,11 @@ describe('processing tag001', () => {
   test('child property updated', () => {
     expect(result[0]).toMatchObject({
       value: { siblings: { tag002: { child: true } } }
+    })
+  })
+  test('calculates child ratio', () => {
+    expect(result[0]).toMatchObject({
+      value: { parentratio: 2 }
     })
   })
   test('adds leveldb instruction', () => {
