@@ -2,19 +2,19 @@ const R = require('ramda')
 const { of } = require('folktale/concurrency/task')
 
 const tag001data = {
-          notes: ['pants1', 'pants2', 'pants3', 'pants4','pants5', 'pants6'],
-          hats: 'shoes',
-          siblings: {
-            tag002: { count: 1, child: false }
-          }
-        }
+  notes: ['pants1', 'pants2', 'pants3', 'pants4', 'pants5', 'pants6'],
+  hats: 'shoes',
+  siblings: {
+    tag002: { count: 1, child: false }
+  }
+}
 
 const tag002data = {
-          notes: ['shoes1', 'shoes2', 'shoes3', 'shoes4'],
-          siblings: {
-            tag001: { count: 3, child: false }
-          }
-        }
+  notes: ['shoes1', 'shoes2', 'shoes3', 'shoes4'],
+  siblings: {
+    tag001: { count: 3, child: false }
+  }
+}
 
 const get = jest.fn()
 get.mockImplementation(r => {
@@ -46,21 +46,24 @@ const subject = require('./tagsRelations')
 describe('processing tag001', () => {
   let result
   beforeAll(done => {
-    subject.processRelations(['tag001'])
-    .run()
-    .future()
-    .map(r => {
-      result = r
-      done()
-    })
+    subject
+      .processRelations(['tag001'])
+      .run()
+      .future()
+      .map(r => {
+        result = r
+        done()
+      })
   })
   test('complete tag data is preserved', () => {
-    expect(result[0]).toMatchObject({hats:'shoes'})
+    expect(result[0]).toMatchObject({ value: { hats: 'shoes' } })
   })
   test('child property updated', () => {
-    expect(result[0]).toMatchObject({siblings:{tag002:{child: true}}})
+    expect(result[0]).toMatchObject({
+      value: { siblings: { tag002: { child: true } } }
+    })
   })
-  test.skip('adds leveldb instruction', () => {
+  test('adds leveldb instruction', () => {
     expect(result[0]).toMatchObject({
       type: 'put',
       key: 'tags:tag001'

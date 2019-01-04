@@ -87,20 +87,24 @@ const processTagTask = tagName =>
     ]
   )
 
+const updateSecond = R.over(R.lensIndex(1))
 const processRelations = 
   R.compose(
     waitAll,
-    R.map(task => task
+    R.map(([tagname, task]) => task
       .map(calcRatios)
+      .map(R.objOf('value'))
       .map(R.assoc('type', 'put'))
+      .map(R.assoc('key', R.concat('tags:', tagname)))
     ),
-    R.map(([tagName, task]) =>
-      task.chain(maybe =>
-        maybe.map(processTagTask(tagName)).getOrElse(of(null))
+    R.map(r => updateSecond(
+      t => t.chain(maybe =>
+        maybe.map(processTagTask(R.head(r))).getOrElse(of(null))
       )
+    )(r)
     ),
-    R.map(R.over(R.lensIndex(1),getT)),
-    R.map(R.over(R.lensIndex(1),R.concat('tags:'))),
+    R.map(updateSecond(getT)),
+    R.map(updateSecond(R.concat('tags:'))),
     R.map(R.repeat(R.__, 2))
   )
 
