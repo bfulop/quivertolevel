@@ -93,15 +93,15 @@ const processRelations =
     R.map(task => task
       .map(calcRatios)
       .map(R.assoc('type', 'put'))
-      // .map(R.assoc('key', R.concat('tags:', tagName)))
     ),
-    R.map(task =>
+    R.map(([tagName, task]) =>
       task.chain(maybe =>
-        maybe.map(processTagTask('tag001')).getOrElse(of(null))
+        maybe.map(processTagTask(tagName)).getOrElse(of(null))
       )
     ),
-    R.map(getT),
-    R.map(R.concat('tags:'))
+    R.map(R.over(R.lensIndex(1),getT)),
+    R.map(R.over(R.lensIndex(1),R.concat('tags:'))),
+    R.map(R.repeat(R.__, 2))
   )
 
 const calcRelations = processRelations
