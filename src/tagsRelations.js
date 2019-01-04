@@ -105,9 +105,25 @@ const processRelations =
     ),
     R.map(updateSecond(getT)),
     R.map(updateSecond(R.concat('tags:'))),
-    R.map(R.repeat(R.__, 2))
+    R.map(R.repeat(R.__, 2)),
+    R.map(R.invoker(1, 'substring')(5))
   )
 
-const calcRelations = processRelations
+const getAllTags = () => task(r => {
+  debugger
+  let tagxs = []
+  const append = R.invoker(1, 'push')
+  const appendList = append(R.__, tagxs)
+  db().createKeyStream({gt:'tags:'})
+  .on('data', appendList)
+  .on('end', t => r.resolve(tagxs))
+})
+
+const calcRelations = () => getAllTags()
+.chain(processRelations)
+.map(r => db().batch(r, () => {
+  console.log('tags updated')
+  return true
+}))
 
 module.exports = { processRelations, calcRelations }
