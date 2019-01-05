@@ -9,8 +9,6 @@ const logger = r => {
   return r
 }
 
-// const db = levelup(encode(leveldown('./quiverdb'), { valueEncoding: 'json' }))
-
 const safeGet = r =>
   db()
     .get(r)
@@ -49,6 +47,7 @@ const prepareTag = (noteId, tagxs) =>
         r
           .orElse(() =>
             Maybe.Just({
+              name: tagId,
               notes: [],
               siblings: {}
             })
@@ -58,7 +57,7 @@ const prepareTag = (noteId, tagxs) =>
           .map(R.objOf('value'))
           .map(R.assoc('type', 'put'))
           .map(R.assoc('key', R.concat('tags:', tagId)))
-          .getOrElse('what?')
+          .getOrElse(null)
       ),
     [
       R.compose(

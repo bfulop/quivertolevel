@@ -72,15 +72,11 @@ describe('simple case, new tag to add', () => {
     })
     expect(r).toMatchObject({
       value: {
+        name: 'tag001',
         notes: ['note001'],
         siblings: { tag002: { count: 1, child: false } }
       }
     })
-
-    // expect(result).toContainEqual({
-    //   type: 'put',
-    //   key: 'tags:tag001',
-    // })
   })
 })
 describe('updates existing tag', () => {
