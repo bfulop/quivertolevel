@@ -1,6 +1,11 @@
 'use strict'
 
+const fs = require('fs-extra')
+const configT = require('./getconfig')
 var index = require('./index')
+
+fs.removeSync('../quiverdb')
+console.log('removed quiverdb')
 
 index()
   .run()
