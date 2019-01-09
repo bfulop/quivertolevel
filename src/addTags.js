@@ -48,6 +48,19 @@ const mergenames = R.compose(
 const addmerged = calcPropR('merged', mergenames)
 const containsTxt = txt => R.test(R.__, txt)
 
+const mergeTagname = R.converge(
+    (t, dictitem) => R.over(R.lensProp('related'), R.append(t), dictitem),
+    [
+      R.prop('name'),
+      R.identity
+    ]
+  )
+const containsWord = R.curry((word, dictitem) => R.contains(word, dictitem))
+const getDictionaryTag = R.curry((dict, word) => R.compose(
+  R.map(R.prop('name')),
+  R.filter(R.compose(R.contains(word), R.prop('related'))),
+  R.map(mergeTagname)
+)(dict))
 const testlist = txt => R.any(containsTxt(txt))
 const testline = txt =>
   R.compose(
@@ -74,18 +87,22 @@ const getAllTags = dict =>
 
 const concatAll_ = R.unapply(R.reduce(R.concat, []))
 const getTagsEveryWhere = dict =>
-    R.converge(concatAll_, [
-      R.view(R.lensPath(['meta', 'tags'])),
-      R.compose(
-        getTagsC(dict),
-        R.objOf('data'),
-        R.path(['content', 'title'])
-      ),
-      R.compose(
-        getAllTags(dict),
-        R.path(['content', 'cells'])
-      )
-    ])
+  R.converge(concatAll_, [
+    R.compose(
+      R.flatten,
+      R.map(getDictionaryTag(dict)),
+      R.view(R.lensPath(['meta', 'tags']))
+    ),
+    R.compose(
+      getTagsC(dict),
+      R.objOf('data'),
+      R.path(['content', 'title'])
+    ),
+    R.compose(
+      getAllTags(dict),
+      R.path(['content', 'cells'])
+    )
+  ])
 const collectTags = dict =>
   R.converge(R.set(R.lensPath(['meta', 'tags'])), [
     getTagsEveryWhere(dict),

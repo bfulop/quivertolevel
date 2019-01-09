@@ -13,13 +13,14 @@ getconfig.mockReturnValue(
       { name: 'tag3', related: ['blah3', 'foo3'] },
       { name: 'tag4', related: ['relatedtg4'] },
       { name: 'tag5', related: ['relatedtg5'] },
+      { name: 'containsquiver', related: ['starttag'] }
     ]
   })
 )
 
 const notedata = {
   meta: {
-    tags: ['starttag']
+    tags: ['starttag', 'unusedtag']
   },
   content: {
     title: 'shoes pants shirts tag1 tag2 relatedtg5',
@@ -60,9 +61,19 @@ describe('calculating the tags', () => {
       expect(r.meta.tags).toContain('tag4')
     })
   })
-  test('keeps the starting tag', () => {
+  test('filters NOT dictionary tags', () => {
     subject.map(r => {
-      expect(r.meta.tags).toContain('starttag')
+      expect(r.meta.tags).not.toContain('starttag')
+    })
+  })
+  test('adds dictionary tag', () => {
+    subject.map(r => {
+      expect(r.meta.tags).toContain('containsquiver')
+    })
+  })
+  test('does not contain empty values', () => {
+    subject.map(r => {
+      expect(r.meta.tags).not.toContain(undefined)
     })
   })
 })
