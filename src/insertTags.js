@@ -25,8 +25,7 @@ const tagsRelatedValues = {
   value: R.path(['note', 'meta', 'tags'])
 }
 const prepareTagData = R.compose(
-  R.pick(['key', 'value']),
-  R.evolve(tagsRelatedValues),
+  R.path(['value', 'note', 'meta']),
   R.find(R.propSatisfies(R.match(/^anote:/), 'key'))
 )
 
@@ -40,7 +39,8 @@ const updateSiblingsList = tagId =>
     R.reject(R.equals(tagId))
   )
 
-const prepareTag = (noteId, tagxs) =>
+// const prepareTag = (noteId, tagxs) =>
+const prepareTag = noteMeta =>
   R.converge(
     (tagT, tagId) =>
       tagT.map(r =>
@@ -52,8 +52,8 @@ const prepareTag = (noteId, tagxs) =>
               siblings: {}
             })
           )
-          .map(R.over(R.lensProp('notes'), R.append(noteId)))
-          .map(R.over(R.lensProp('siblings'), updateSiblingsList(tagId)(tagxs)))
+          .map(R.over(R.lensProp('notes'), R.append(noteMeta)))
+          .map(R.over(R.lensProp('siblings'), updateSiblingsList(tagId)(R.prop('tags', noteMeta))))
           .map(R.objOf('value'))
           .map(R.assoc('type', 'put'))
           .map(R.assoc('key', R.concat('tags:', tagId)))
@@ -68,10 +68,10 @@ const prepareTag = (noteId, tagxs) =>
     ]
   )
 
+  // ([id, tags]) => tags.map(prepareTag(id, tags)),
 const createTags = R.compose(
   waitAll,
-  ([id, tags]) => tags.map(prepareTag(id, tags)),
-  R.values,
+  noteMeta => R.compose(R.map(prepareTag(noteMeta)), R.prop('tags'))(noteMeta),
   prepareTagData
 )
 

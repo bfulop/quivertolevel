@@ -7,7 +7,7 @@ get.mockImplementation(r => {
     switch (r) {
       case 'tags:tag003':
         res({
-          notes: ['somenote'],
+          notes: [{ id: 'somenote' }],
           siblings: {
             sometag: { count: 1, child: false },
             existingtag: { count: 4, child: false }
@@ -41,7 +41,8 @@ describe('simple case, new tag to add', () => {
       note: {
         meta: {
           tags: ['tag001', 'tag002'],
-          socks: 'shirts'
+          socks: 'shirts',
+          uuid: 'note001'
         },
         gloves: 'sandals'
       }
@@ -73,9 +74,15 @@ describe('simple case, new tag to add', () => {
     expect(r).toMatchObject({
       value: {
         name: 'tag001',
-        notes: ['note001'],
+        // notes: [{
+        //   id: 'note001'
+        // }],
         siblings: { tag002: { count: 1, child: false } }
       }
+    })
+    let n = R.find(R.propEq('uuid', 'note001'), R.path(['value', 'notes'], r))
+    expect(n).toMatchObject({
+      socks: 'shirts'
     })
   })
 })
@@ -86,7 +93,8 @@ describe('updates existing tag', () => {
     value: {
       note: {
         meta: {
-          tags: ['tag003', 'tag004', 'existingtag']
+          tags: ['tag003', 'tag004', 'existingtag'],
+          uuid: 'note002'
         }
       }
     }
@@ -105,13 +113,18 @@ describe('updates existing tag', () => {
     let r = R.find(R.propEq('key', 'tags:tag003'), result)
     expect(r).toMatchObject({
       value: {
-        notes: ['somenote', 'note002'],
+        // notes: [
+        // {id:'somenote'},
+        // {id:'note002'}
+        // ],
         siblings: {
           tag004: { count: 1, child: false },
           sometag: { count: 1, child: false },
-          existingtag: { count: 5, child: false}
+          existingtag: { count: 5, child: false }
         }
       }
     })
+    let n = R.find(R.propEq('uuid', 'note002'), R.path(['value', 'notes'], r))
+    expect(n).toMatchObject({ uuid: 'note002' })
   })
 })
