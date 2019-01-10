@@ -9,14 +9,6 @@ const logger = r => {
   return r
 }
 
-const safeGet = r =>
-  db()
-    .get(r)
-    .then(Maybe.Just)
-    .catch(Maybe.Nothing)
-
-const getT = fromPromised(safeGet)
-
 const getNoteMeta = R.compose(
   R.converge(R.assoc('nbook'), [
     R.path(['value', 'note', 'nbook']),
@@ -24,50 +16,6 @@ const getNoteMeta = R.compose(
   ]),
   R.find(R.propSatisfies(R.match(/^anote:/), 'key'))
 )
-
-const incCount = (k, l, r) => (k == 'count' ? r + 1 : r)
-
-const updateSiblingsList = tagId =>
-  R.compose(
-    R.mergeDeepWithKey(incCount),
-    R.fromPairs,
-    R.map(R.pair(R.__, { count: 1, child: false })),
-    R.reject(R.equals(tagId))
-  )
-
-// const prepareTag = (noteId, tagxs) =>
-const prepareTag = noteMeta =>
-  R.converge(
-    (tagT, tagId) =>
-      tagT.map(r =>
-        r
-          .orElse(() =>
-            Maybe.Just({
-              name: tagId,
-              notes: [],
-              siblings: {}
-            })
-          )
-          .map(R.over(R.lensProp('notes'), R.append(noteMeta)))
-          .map(
-            R.over(
-              R.lensProp('siblings'),
-              updateSiblingsList(tagId)(R.prop('tags', noteMeta))
-            )
-          )
-          .map(R.objOf('value'))
-          .map(R.assoc('type', 'put'))
-          .map(R.assoc('key', R.concat('tags:', tagId)))
-          .getOrElse(null)
-      ),
-    [
-      R.compose(
-        getT,
-        R.concat('tags:')
-      ),
-      R.identity
-    ]
-  )
 
 const addANoteToList = noteMeta =>
   R.compose(

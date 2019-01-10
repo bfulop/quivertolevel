@@ -104,7 +104,7 @@ const addNoteToDB = ({
     .map(r => r.map(maybeAddNotebook(anotebookkey, notebookkey, value)))
     .map(r => r.getOrElse(createNewNotebook(anotebookkey, notebookkey, value)))
     .map(R.concat(baseinfo))
-    .chain(insertTags)
+    .map(insertTags)
     .chain(batchT)
 }
 
