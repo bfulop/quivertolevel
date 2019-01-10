@@ -32,7 +32,6 @@ getDb.mockReturnValue(db)
 const subject = require('./insertTags')
 
 describe('simple case, new tag to add', () => {
-  let result
   const note1 = {
     shoes: 'hats',
     key: 'anote:note001',
@@ -42,89 +41,54 @@ describe('simple case, new tag to add', () => {
         meta: {
           tags: ['tag001', 'tag002'],
           socks: 'shirts',
+          created_at: '123',
           uuid: 'note001'
+        },
+        nbook: {
+          uuid: 'nbook001',
+          stuff: 'pants'
         },
         gloves: 'sandals'
       }
     }
   }
   const otherstuff = { hats: 'pants' }
-  beforeAll(done => {
-    const simpleCase = [note1, otherstuff]
-    subject(simpleCase)
-      .run()
-      .future()
-      .map(r => {
-        result = r
-        done()
-      })
-  })
+  const simpleCase = [note1, otherstuff]
   test('contains the original element', () => {
-    expect(result).toContain(note1)
+    expect(subject(simpleCase)).toContain(note1)
   })
   test('contains unimportant elements', () => {
-    expect(result).toContain(otherstuff)
+    expect(subject(simpleCase)).toContain(otherstuff)
   })
-  test('puts new tag', () => {
-    let r = R.find(R.propEq('key', 'tags:tag001'), result)
-    expect(r).toMatchObject({
-      type: 'put',
-      key: 'tags:tag001'
+  test('puts new tag tags:tagsuuid:notes:notedate:noteuuid', () => {
+    let result = subject(simpleCase)
+    let putCommand = R.find(
+      R.propEq('key', 'tags:tag001:notes:123:note001'),
+      result
+    )
+    expect(putCommand).toMatchObject({
+      type: 'put'
     })
-    expect(r).toMatchObject({
-      value: {
-        name: 'tag001',
-        // notes: [{
-        //   id: 'note001'
-        // }],
-        siblings: { tag002: { count: 1, child: false } }
-      }
-    })
-    let n = R.find(R.propEq('uuid', 'note001'), R.path(['value', 'notes'], r))
-    expect(n).toMatchObject({
-      socks: 'shirts'
+    expect(putCommand.value).toMatchObject({ meta: { socks: 'shirts' } })
+  })
+  test('adds sibling info', () => {
+    let result = subject(simpleCase)
+    let putCommand = R.find(
+      R.propEq('key', 'tags:tag001:siblings:tag002:note001'),
+      result
+    )
+    expect(putCommand).toMatchObject({
+      type: 'put'
     })
   })
-})
-describe('updates existing tag', () => {
-  let result
-  const note2 = {
-    key: 'anote:note002',
-    value: {
-      note: {
-        meta: {
-          tags: ['tag003', 'tag004', 'existingtag'],
-          uuid: 'note002'
-        }
-      }
-    }
-  }
-  beforeAll(done => {
-    const simpleCase = [note2]
-    subject(simpleCase)
-      .run()
-      .future()
-      .map(r => {
-        result = r
-        done()
-      })
-  })
-  test('updates tag', () => {
-    let r = R.find(R.propEq('key', 'tags:tag003'), result)
-    expect(r).toMatchObject({
-      value: {
-        // notes: [
-        // {id:'somenote'},
-        // {id:'note002'}
-        // ],
-        siblings: {
-          tag004: { count: 1, child: false },
-          sometag: { count: 1, child: false },
-          existingtag: { count: 5, child: false }
-        }
-      }
+  test('list the notebooks', () => {
+    let result = subject(simpleCase)
+    let putCommand = R.find(
+      R.propEq('key', 'tags:tag001:notebooks:nbook001:notes:note001'),
+      result
+    )
+    expect(putCommand).toMatchObject({
+      type: 'put'
     })
-    let n = R.find(R.propEq('uuid', 'note002'), R.path(['value', 'notes'], r))
-    expect(n).toMatchObject({ uuid: 'note002' })
   })
 })
