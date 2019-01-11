@@ -73,6 +73,44 @@ const listSiblings = () =>
       .on('end', () => r.resolve())
   })
 
-const processTags = () => R.traverse(of, R.call, [listUniqueTags, listSiblings])
+const processASiblingRatio = R.converge(
+  (siblingTag, siblingCount, targetCountT) =>
+    R.map(targetCount =>
+      R.assocPath(
+        ['value', 'ratio'],
+        R.divide(targetCount, siblingCount),
+        siblingTag
+      )
+    )(targetCountT),
+  [
+    R.identity,
+    R.path(['value', 'count']),
+    R.compose(
+      R.map(R.path(['value', 'count'])),
+      getT,
+      R.concat('atag:'),
+      R.compose(
+        R.nth(1),
+        R.split(':')
+      ),
+      R.prop('key')
+    )
+  ]
+)
+
+const processRatios = R.compose(
+  r => r.run(),
+  R.chain(t => putT(R.prop('key', t), R.prop('value', t))),
+  processASiblingRatio
+)
+const calcRatios = () =>
+  task(r => {
+    db()
+      .createReadStream({ gt: 'atagsibling:', lt: 'atagsibling:~' })
+      .on('data', processRatios)
+      .on('end', () => r.resolve())
+  })
+const processTags = () =>
+  R.traverse(of, R.call, [listUniqueTags, listSiblings]).chain(calcRatios)
 
 module.exports = { processTags }
