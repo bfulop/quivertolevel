@@ -16,64 +16,63 @@ const safeGet = r =>
     .catch(Maybe.Nothing)
 
 const getT = fromPromised(safeGet)
-const batchT = fromPromised(t => db().batch(t))
 const putT = R.curry((key, value) =>
   fromPromised((k, v) => db().put(k, v))(key, value)
 )
 
-const getTagTask = R.compose(
+const prepareUniqueTagData = R.compose(
   R.map(R.over(R.lensProp('count'), R.inc)),
   R.map(t => t.getOrElse({ count: 0 })),
   getT
 )
-const putUniqueTag = R.curry((tagId, tagRecordT) =>
-  R.map(
-    R.compose(
-      R.assoc('type', 'put'),
-      R.assoc('key', tagId),
-      R.objOf('value')
-    )
+const insertUniqueTag = R.curry((tagId, tagRecordT) =>
+  R.compose(
+    R.invoker(0, 'run'),
+    R.chain(putT(tagId))
   )(tagRecordT)
 )
 
-const atagUpdate = R.compose(
-  R.converge(putUniqueTag, [R.identity, getTagTask]),
+const processUniqueTag = R.compose(
+  R.converge(insertUniqueTag, [R.identity, prepareUniqueTagData]),
   R.concat('atag:'),
   R.compose(
     R.nth(1),
     R.split(':')
-  ),
-)
-
-const atagsiblingUpdate = () =>
-  of({ type: 'put', key: 'atagsibling:atag1:atag2', value: { count: 2 } })
-
-const getPutCommands = R.converge(R.unapply(waitAll), [
-  atagsiblingUpdate,
-  atagUpdate
-])
-
-const runUpdates = R.compose(
-  R.invoker(0, 'run'),
-  R.chain(batchT),
-  getPutCommands,
+  )
 )
 
 const listUniqueTags = () =>
   task(r => {
-    let tagxs = []
-    const append = R.invoker(1, 'push')
     db()
       .createKeyStream({ gt: 'tagsnotes:', lt: 'tagsnotes:~' })
-      .on('data', runUpdates)
-      .on('end', () =>
-        R.compose(
-          r.resolve,
-          R.uniq
-        )(tagxs)
-      )
+      .on('data', processUniqueTag)
+      .on('end', () => r.resolve())
   })
 
-const processTags = () => listUniqueTags().map(R.map(R.concat('yes')))
+const prepareUniqueSiblingData = R.compose(
+  R.map(R.over(R.lensProp('count'), R.inc)),
+  R.map(t => t.getOrElse({ count: 0 })),
+  getT
+)
+const processUniqueSibling = R.compose(
+  R.converge(insertUniqueTag, [R.identity, prepareUniqueSiblingData]),
+  R.concat('atagsibling:'),
+  R.converge(R.unapply(R.reduce(R.concat, '')), [
+    R.nth(1),
+    () => ':',
+    R.nth(2)
+  ]),
+  R.split(':')
+)
+
+const listSiblings = () =>
+  task(r => {
+    db()
+      .createKeyStream({ gt: 'tagsiblings:', lt: 'tagsiblings:~' })
+      .on('data', processUniqueSibling)
+      .on('end', () => r.resolve())
+  })
+
+const processTags = () => R.traverse(of, R.call, [listUniqueTags, listSiblings])
 
 module.exports = { processTags }
