@@ -26,7 +26,7 @@ const addANoteToList = noteMeta =>
     R.concat(R.__, ':'),
     R.concat(R.__, R.prop('created_at', noteMeta)),
     R.concat(R.__, ':notes:'),
-    R.concat('tags:')
+    R.concat('tagsnotes:')
   )
 const notesToTagsList = R.converge(
   (tagxs, noteMeta) => tagxs.map(addANoteToList(noteMeta)),
@@ -42,7 +42,7 @@ const addTagToSibling = R.curry((tagxs, noteId, tagId) =>
         R.concat(R.__, ':'),
         R.concat(R.__, tagId),
         R.concat(R.__, ':siblings:'),
-        R.concat('tags:')
+        R.concat('tagsiblings:')
       )
     ),
     R.reject(R.equals(tagId))
@@ -60,7 +60,7 @@ const addNoteBookToTag = noteMeta => R.compose(
   R.concat(R.__, ':notes:'),
   R.concat(R.__, R.path(['nbook', 'uuid'], noteMeta)),
   R.concat(R.__, ':notebooks:'),
-  R.concat('tags:')
+  R.concat('tagsnotebooks:')
 )
 const notebooksToTagsList = R.converge(
   (tagxs, noteMeta) => tagxs.map(addNoteBookToTag(noteMeta)),

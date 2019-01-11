@@ -60,10 +60,10 @@ describe('simple case, new tag to add', () => {
   test('contains unimportant elements', () => {
     expect(subject(simpleCase)).toContain(otherstuff)
   })
-  test('puts new tag tags:tagsuuid:notes:notedate:noteuuid', () => {
+  test('lists notes and tags tagsnotes:tagsuuid:notes:notedate:noteuuid', () => {
     let result = subject(simpleCase)
     let putCommand = R.find(
-      R.propEq('key', 'tags:tag001:notes:123:note001'),
+      R.propEq('key', 'tagsnotes:tag001:notes:123:note001'),
       result
     )
     expect(putCommand).toMatchObject({
@@ -74,7 +74,7 @@ describe('simple case, new tag to add', () => {
   test('adds sibling info', () => {
     let result = subject(simpleCase)
     let putCommand = R.find(
-      R.propEq('key', 'tags:tag001:siblings:tag002:note001'),
+      R.propEq('key', 'tagsiblings:tag001:siblings:tag002:note001'),
       result
     )
     expect(putCommand).toMatchObject({
@@ -84,7 +84,7 @@ describe('simple case, new tag to add', () => {
   test('list the notebooks', () => {
     let result = subject(simpleCase)
     let putCommand = R.find(
-      R.propEq('key', 'tags:tag001:notebooks:nbook001:notes:note001'),
+      R.propEq('key', 'tagsnotebooks:tag001:notebooks:nbook001:notes:note001'),
       result
     )
     expect(putCommand).toMatchObject({

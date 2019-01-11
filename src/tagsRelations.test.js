@@ -1,52 +1,30 @@
 const R = require('ramda')
 const { of } = require('folktale/concurrency/task')
-
-const tag001data = {
-  notes: ['pants1', 'pants2', 'pants3', 'pants4', 'pants5', 'pants6'],
-  hats: 'shoes',
-  siblings: {
-    tag002: { count: 1, child: false },
-    tag003: { count: 3, child: false }
-  }
-}
-
-const tag002data = {
-  notes: ['pants1', 'pants2', 'pants3', 'pants4'],
-  siblings: {
-    tag001: { count: 1, child: false }
-  }
-}
-
-const tag003data = {
-  notes: ['pants1', 'pants2', 'pants3', 'pants4'],
-  siblings: {
-    tag001: { count: 3, child: false }
-  }
-}
-
-const get = jest.fn()
-get.mockImplementation(r => {
-  return new Promise((res, rej) => {
-    switch (r) {
-      case 'tags:tag001':
-        res(tag001data)
-        break
-      case 'tags:tag002':
-        res(tag002data)
-        break
-      case 'tags:tag003':
-        res(tag003data)
-        break
-      default:
-        rej('not fond')
-    }
-  })
-})
-const db = { get }
-
-jest.mock('levelup')
 const levelup = require('levelup')
-levelup.mockReturnValue(db)
+const memdown = require('memdown')
+const encode = require('encoding-down')
+
+const db = levelup(encode(memdown(), { valueEncoding: 'json' }))
+
+
+// seed some data
+const data = [
+  { type: 'put', key: 'tagsnotes:atag1:notes:123:note001', value: 'pants' },
+  { type: 'put', key: 'tagsnotes:atag1:notes:124:note002', value: 'pants' },
+  { type: 'put', key: 'tagsnotes:atag2:notes:123:note001', value: 'pants' },
+  { type: 'put', key: 'tagsnotes:atag2:notes:124:note002', value: 'pants' },
+  { type: 'put', key: 'tagsiblings:atag1:atag2:note001', value: 'pants' },
+  { type: 'put', key: 'tagsiblings:atag1:atag2:note002', value: 'pants' },
+]
+db.batch(data, err => {
+  if (err) {
+    console.log('Ooops!', err)
+    console.log('Ooops!', err)
+  } else {
+    console.log('data seeded')
+  }
+
+})
 
 jest.mock('./utils/db')
 const getDb = require('./utils/db')
@@ -54,11 +32,11 @@ getDb.mockReturnValue(db)
 
 const subject = require('./tagsRelations')
 
-describe('processing tag001', () => {
+describe('summarising the tags', () => {
   let result
   beforeAll(done => {
     subject
-      .processRelations(['tags:tag001'])
+      .processTags()
       .run()
       .future()
       .map(r => {
@@ -66,28 +44,10 @@ describe('processing tag001', () => {
         done()
       })
   })
-  test('complete tag data is preserved', () => {
-    expect(result[0]).toMatchObject({ value: { hats: 'shoes' } })
+  test('adds the unique tag record', () => {
+    return expect(db.get('atag:atag1')).resolves.toMatchObject({count: 2})
   })
-  test('child property updated', () => {
-    expect(result[0]).toMatchObject({
-      value: { siblings: { tag002: { child: true } } }
-    })
-  })
-  test('calculates child ratio', () => {
-    expect(result[0]).toMatchObject({
-      value: { parentratio: 2 }
-    })
-  })
-  test('adds notes size', () => {
-    expect(result[0]).toMatchObject({
-      value: { size: 6 }
-    })
-  })
-  test('adds leveldb instruction', () => {
-    expect(result[0]).toMatchObject({
-      type: 'put',
-      key: 'tags:tag001'
-    })
+  test('collects sibling', () => {
+    return expect(db.get('atagsibling:atag1:atag2')).resolves.toMatchObject({count: 2})
   })
 })

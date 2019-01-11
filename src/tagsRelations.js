@@ -16,143 +16,64 @@ const safeGet = r =>
     .catch(Maybe.Nothing)
 
 const getT = fromPromised(safeGet)
+const batchT = fromPromised(t => db().batch(t))
+const putT = R.curry((key, value) =>
+  fromPromised((k, v) => db().put(k, v))(key, value)
+)
 
-const addChildRatio = length =>
-  R.converge(R.assoc('ratio'), [
+const getTagTask = R.compose(
+  R.map(R.over(R.lensProp('count'), R.inc)),
+  R.map(t => t.getOrElse({ count: 0 })),
+  getT
+)
+const putUniqueTag = R.curry((tagId, tagRecordT) =>
+  R.map(
     R.compose(
-      R.divide(length),
-      R.prop('count')
-    ),
-    R.identity
-  ])
+      R.assoc('type', 'put'),
+      R.assoc('key', tagId),
+      R.objOf('value')
+    )
+  )(tagRecordT)
+)
 
-const calcChildState = R.converge(R.set(R.lensProp('child')), [
-  R.converge(R.gte, [R.prop('ratio'), R.prop('childratio')]),
-  R.identity
-])
-
-const setChildState = length =>
+const atagUpdate = R.compose(
+  R.converge(putUniqueTag, [R.identity, getTagTask]),
+  R.concat('atag:'),
   R.compose(
-    calcChildState,
-    addChildRatio(length)
-  )
-
-const addSize = R.converge(R.assoc('size'), [
-  R.compose(R.length, R.prop('notes')),
-  R.identity
-])
-
-const calcParentRatio = R.converge(R.assoc('parentratio'), [
-  R.converge(
-    R.subtract, [
-    R.compose(
-      R.length,
-      R.filter(R.prop('child')),
-      R.values,
-      R.prop('siblings')
-    ),
-    R.compose(
-      R.length,
-      R.filter(R.compose(R.not, R.prop('child'))),
-      R.values,
-      R.prop('siblings')
-    )
-  ]),
-  R.identity
-])
-const calcRatios = R.converge(
-  (length, tag) =>
-    R.over(R.lensProp('siblings'), R.map(setChildState(length)), tag),
-  [
-    R.compose(
-      R.length,
-      R.prop('notes')
-    ),
-    R.identity
-  ]
+    R.nth(1),
+    R.split(':')
+  ),
 )
 
-const calcRatio = tagName =>
-  R.converge(R.divide, [
-    R.compose(
-      R.length,
-      R.prop('notes')
-    ),
-    R.path(['siblings', tagName, 'count'])
-  ])
+const atagsiblingUpdate = () =>
+  of({ type: 'put', key: 'atagsibling:atag1:atag2', value: { count: 2 } })
 
-const getRatio = tagName =>
-  R.converge(R.pair, [
-    of,
-    R.compose(
-      t => t.map(d => d.map(calcRatio(tagName)).getOrElse()),
-      R.compose(
-        getT,
-        R.concat('tags:')
-      )
-    )
-  ])
+const getPutCommands = R.converge(R.unapply(waitAll), [
+  atagsiblingUpdate,
+  atagUpdate
+])
 
-const processTagTask = tagName =>
-  R.converge(
-    (tag, ratiosT) =>
-      ratiosT.map(R.mergeDeepWith(R.assoc('childratio'), R.__, tag)),
-    [
-      R.identity,
-      R.compose(
-        R.map(R.objOf('siblings')),
-        R.map(R.fromPairs),
-        waitAll,
-        R.map(waitAll),
-        R.map(getRatio(tagName)),
-        R.keys,
-        R.prop('siblings')
-      )
-    ]
-  )
-
-const updateSecond = R.over(R.lensIndex(1))
-const processRelations = R.compose(
-  waitAll,
-  R.map(([tagname, task]) =>
-    task
-      .map(calcRatios)
-      .map(calcParentRatio)
-      .map(addSize)
-      .map(R.objOf('value'))
-      .map(R.assoc('type', 'put'))
-      .map(R.assoc('key', R.concat('tags:', tagname)))
-  ),
-  R.map(r =>
-    updateSecond(t =>
-      t.chain(maybe => maybe.map(processTagTask(R.head(r))).getOrElse(of(null)))
-    )(r)
-  ),
-  R.map(updateSecond(getT)),
-  R.map(updateSecond(R.concat('tags:'))),
-  R.map(R.repeat(R.__, 2)),
-  R.map(R.invoker(1, 'substring')(5))
+const runUpdates = R.compose(
+  R.invoker(0, 'run'),
+  R.chain(batchT),
+  getPutCommands,
 )
 
-const getAllTags = () =>
+const listUniqueTags = () =>
   task(r => {
     let tagxs = []
     const append = R.invoker(1, 'push')
-    const appendList = append(R.__, tagxs)
     db()
-      .createKeyStream({ gt: 'tags:' })
-      .on('data', appendList)
-      .on('end', t => r.resolve(tagxs))
+      .createKeyStream({ gt: 'tagsnotes:', lt: 'tagsnotes:~' })
+      .on('data', runUpdates)
+      .on('end', () =>
+        R.compose(
+          r.resolve,
+          R.uniq
+        )(tagxs)
+      )
   })
 
-const calcRelations = () =>
-  getAllTags()
-    .chain(processRelations)
-    .map(r =>
-      db().batch(r, () => {
-        console.log('tags updated')
-        return true
-      })
-    )
+const processTags = () => listUniqueTags().map(R.map(R.concat('yes')))
 
-module.exports = { processRelations, calcRelations }
+module.exports = { processTags }
