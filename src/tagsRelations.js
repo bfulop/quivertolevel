@@ -110,7 +110,57 @@ const calcRatios = () =>
       .on('data', processRatios)
       .on('end', () => r.resolve())
   })
+
+const importRatio = R.converge(
+  (ratioT, tag) =>
+    R.map(ratio => R.assocPath(['value', 'childratio'], ratio, tag), ratioT),
+  [
+    R.compose(
+      R.map(R.path(['value', 'ratio'])),
+      getT,
+      R.concat('atagsibling:'),
+      R.compose(
+        R.join(':'),
+        R.reverse(),
+        R.drop(1),
+        R.split(':')
+      ),
+      R.prop('key')
+    ),
+    R.identity
+  ]
+)
+
+const compareRatios = R.compose(
+  r => r.run(),
+  R.chain(t => putT(R.prop('key', t), R.prop('value', t))),
+  R.map(
+    R.converge(
+      (nums, data) => R.assocPath(['value', 'child'], R.apply(R.gt, nums), data),
+      [
+        R.compose(
+          R.values,
+          R.pick(['ratio', 'childratio']),
+          R.prop('value'),
+        ),
+        R.identity
+      ]
+    )
+  ),
+  // R.map(logger),
+  importRatio
+)
+const summariseRatios = () =>
+  task(r => {
+    db()
+      .createReadStream({ gt: 'atagsibling:', lt: 'atagsibling:~' })
+      .on('data', compareRatios)
+      .on('end', () => r.resolve())
+  })
+
 const processTags = () =>
-  R.traverse(of, R.call, [listUniqueTags, listSiblings]).chain(calcRatios)
+  R.traverse(of, R.call, [listUniqueTags, listSiblings])
+    .chain(calcRatios)
+    .chain(summariseRatios)
 
 module.exports = { processTags }

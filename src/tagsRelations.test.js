@@ -65,10 +65,13 @@ describe('summarising the tags', () => {
   test('sibling ratio (atag2)', () => {
     return expect(db.get('atagsibling:atag2:atag1')).resolves.toMatchObject({ratio: 1})
   })
-  test('saves child ratio', () => {
+  test('copies the ratio from the sibling', () => {
     return expect(db.get('atagsibling:atag1:atag2')).resolves.toMatchObject({childratio: 1})
   })
   test('sets "child" state', () => {
-    return expect(db.get('atagsibling:atag1:atag2')).resolves.toMatchObject({child: false})
+    return expect(db.get('atagsibling:atag1:atag2')).resolves.toMatchObject({child: true})
+  })
+  test('sets "child" state for sibling', () => {
+    return expect(db.get('atagsibling:atag2:atag1')).resolves.toMatchObject({child: false})
   })
 })
