@@ -6,7 +6,6 @@ const encode = require('encoding-down')
 
 const db = levelup(encode(memdown(), { valueEncoding: 'json' }))
 
-
 // seed some data
 const data = [
   { type: 'put', key: 'tagsnotes:atag1:notes:123:note001', value: 'pants' },
@@ -18,7 +17,7 @@ const data = [
   { type: 'put', key: 'tagsiblings:atag1:atag2:note001', value: 'pants' },
   { type: 'put', key: 'tagsiblings:atag1:atag2:note002', value: 'pants' },
   { type: 'put', key: 'tagsiblings:atag2:atag1:note001', value: 'pants' },
-  { type: 'put', key: 'tagsiblings:atag2:atag1:note002', value: 'pants' },
+  { type: 'put', key: 'tagsiblings:atag2:atag1:note002', value: 'pants' }
 ]
 db.batch(data, err => {
   if (err) {
@@ -26,7 +25,6 @@ db.batch(data, err => {
   } else {
     console.log('data seeded')
   }
-
 })
 
 jest.mock('./utils/db')
@@ -47,31 +45,65 @@ describe('summarising the tags', () => {
         done()
       })
   })
-  test('adds the unique tag record', () => {
-    return expect(db.get('atag:atag1')).resolves.toMatchObject({count: 4})
+  describe('list single tags (listUniqueTags)', () => {
+    test('adds the unique tag record', () => {
+      return expect(db.get('atag:atag1')).resolves.toMatchObject({ count: 4 })
+    })
+    test('adds the unique tag record (atag2)', () => {
+      return expect(db.get('atag:atag2')).resolves.toMatchObject({ count: 2 })
+    })
   })
-  test('adds the unique tag record (atag2)', () => {
-    return expect(db.get('atag:atag2')).resolves.toMatchObject({count: 2})
+  describe('list sibling tags (listSiblings)', () => {
+    test('collects sibling', () => {
+      return expect(db.get('atagsibling:atag1:atag2')).resolves.toMatchObject({
+        count: 2
+      })
+    })
+    test('collects sibling (atag2)', () => {
+      return expect(db.get('atagsibling:atag2:atag1')).resolves.toMatchObject({
+        count: 2
+      })
+    })
   })
-  test('collects sibling', () => {
-    return expect(db.get('atagsibling:atag1:atag2')).resolves.toMatchObject({count: 2})
+  describe('calculates ratios (calcRatios)', () => {
+    test('calculates ratios (total number of notes / sibling tag count)', () => {
+      return expect(db.get('atagsibling:atag1:atag2')).resolves.toMatchObject({
+        ratio: 2
+      })
+    })
+    test('sibling ratio (atag2)', () => {
+      return expect(db.get('atagsibling:atag2:atag1')).resolves.toMatchObject({
+        ratio: 1
+      })
+    })
   })
-  test('collects sibling (atag2)', () => {
-    return expect(db.get('atagsibling:atag2:atag1')).resolves.toMatchObject({count: 2})
+  describe('calculates sibling tag relationship (summariseRatios)', () => {
+    test('copies the ratio from the sibling', () => {
+      return expect(db.get('atagsibling:atag1:atag2')).resolves.toMatchObject({
+        childratio: 1
+      })
+    })
+    test('sets "child" state', () => {
+      return expect(db.get('atagsibling:atag1:atag2')).resolves.toMatchObject({
+        child: true
+      })
+    })
+    test('sets "child" state for sibling', () => {
+      return expect(db.get('atagsibling:atag2:atag1')).resolves.toMatchObject({
+        child: false
+      })
+    })
   })
-  test('calculates ratios (total number of notes / sibling tag count)', () => {
-    return expect(db.get('atagsibling:atag1:atag2')).resolves.toMatchObject({ratio: 2})
-  })
-  test('sibling ratio (atag2)', () => {
-    return expect(db.get('atagsibling:atag2:atag1')).resolves.toMatchObject({ratio: 1})
-  })
-  test('copies the ratio from the sibling', () => {
-    return expect(db.get('atagsibling:atag1:atag2')).resolves.toMatchObject({childratio: 1})
-  })
-  test('sets "child" state', () => {
-    return expect(db.get('atagsibling:atag1:atag2')).resolves.toMatchObject({child: true})
-  })
-  test('sets "child" state for sibling', () => {
-    return expect(db.get('atagsibling:atag2:atag1')).resolves.toMatchObject({child: false})
+  describe('ordering of tags on parent/child status', () => {
+    test('sets parentratio (number of childs minus no of non-child)', () => {
+      return expect(db.get('atag:atag1')).resolves.toMatchObject({
+        parentratio: 1
+      })
+    })
+    test('sets parentratio (tag2)', () => {
+      return expect(db.get('atag:atag2')).resolves.toMatchObject({
+        parentratio: -1
+      })
+    })
   })
 })

@@ -136,18 +136,18 @@ const compareRatios = R.compose(
   R.chain(t => putT(R.prop('key', t), R.prop('value', t))),
   R.map(
     R.converge(
-      (nums, data) => R.assocPath(['value', 'child'], R.apply(R.gt, nums), data),
+      (nums, data) =>
+        R.assocPath(['value', 'child'], R.apply(R.gt, nums), data),
       [
         R.compose(
           R.values,
           R.pick(['ratio', 'childratio']),
-          R.prop('value'),
+          R.prop('value')
         ),
         R.identity
       ]
     )
   ),
-  // R.map(logger),
   importRatio
 )
 const summariseRatios = () =>
@@ -158,9 +158,64 @@ const summariseRatios = () =>
       .on('end', () => r.resolve())
   })
 
+const enumChildren = tagId =>
+  task(r => {
+    let parentratio = 0
+    const selector = R.concat('atagsibling:', tagId)
+    const updateparentratio = R.ifElse(
+      R.prop('child'),
+      () => (parentratio = R.inc(parentratio)),
+      () => (parentratio = R.dec(parentratio))
+    )
+    const createsiblingselector = R.compose(
+      R.over(R.lensProp('lt'), R.concat(R.__, '~')),
+      R.zipObj(['gt', 'lt']),
+      R.repeat(R.__, 2),
+      R.concat('atagsibling:'),
+    )
+
+    db()
+      .createValueStream(createsiblingselector(tagId))
+      .on('data', updateparentratio)
+      .on('end', () => r.resolve(parentratio))
+  })
+
+const calcParentRatio = R.converge(
+  (ratioT, tag) => ratioT.map(ratio => R.assocPath(['value', 'parentratio'], ratio, tag)),
+  [
+  R.compose(
+    enumChildren,
+    R.compose(
+      R.nth(1),
+      R.split(':')
+    ),
+    R.prop('key'),
+  ),
+  R.identity
+])
+
+const calcParentRatioTest = () => of({key:'atag:atag1', 'value': {count:4, parentratio: 1, istrue:false}})
+
+const setParentRatio = R.compose(
+  R.chain(t => putT(t.key, t.value)),
+  calcParentRatio,
+)
+
+const addParentRatio = () =>
+  task(r => {
+    let atagupdatexs = []
+    db()
+      .createReadStream({ gt: 'atag:', lt: 'atag:~' })
+      .on('data', t => atagupdatexs.push(t))
+      .on('end', () => r.resolve(atagupdatexs))
+  })
+  .map(R.map(setParentRatio))
+  .chain(waitAll)
+
 const processTags = () =>
   R.traverse(of, R.call, [listUniqueTags, listSiblings])
     .chain(calcRatios)
     .chain(summariseRatios)
+    .chain(addParentRatio)
 
 module.exports = { processTags }
