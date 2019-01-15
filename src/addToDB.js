@@ -23,7 +23,8 @@ const safeGet = r =>
 // const batchT = fromPromised(db.batch)
 const batchT = b =>
   task(r => {
-    db().batch(b)
+    db()
+      .batch(b)
       .then(r.resolve)
       .catch(r.reject)
   })
@@ -100,12 +101,16 @@ const addNoteToDB = ({
       )(value)
     }
   ]
-  return getT(extractNotebookId(anotebookkey))
-    .map(r => r.map(maybeAddNotebook(anotebookkey, notebookkey, value)))
-    .map(r => r.getOrElse(createNewNotebook(anotebookkey, notebookkey, value)))
-    .map(R.concat(baseinfo))
-    .map(insertTags)
-    .chain(batchT)
+  return (
+    getT(extractNotebookId(anotebookkey))
+      .map(r => r.map(maybeAddNotebook(anotebookkey, notebookkey, value)))
+      .map(r =>
+        r.getOrElse(createNewNotebook(anotebookkey, notebookkey, value))
+      )
+      .map(R.concat(baseinfo))
+      .map(insertTags)
+      .chain(batchT)
+  )
 }
 
 module.exports = { addNoteToDB }
