@@ -11,7 +11,7 @@ const logger = r => {
 
 const getNoteMeta = R.compose(
   R.converge(R.assoc('nbook'), [
-    R.path(['value', 'note', 'nbook']),
+    R.path(['value', 'nbook']),
     R.path(['value', 'note', 'meta'])
   ]),
   R.find(R.propSatisfies(R.match(/^anote:/), 'key'))
@@ -24,7 +24,7 @@ const addANoteToList = noteMeta =>
     R.objOf('key'),
     R.concat(R.__, R.prop('uuid', noteMeta)),
     R.concat(R.__, ':'),
-    R.concat(R.__, R.prop('created_at', noteMeta)),
+    R.concat(R.__, R.toString(R.prop('created_at', noteMeta))),
     R.concat(R.__, ':notes:'),
     R.concat('tagsnotes:')
   )

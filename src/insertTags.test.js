@@ -37,16 +37,16 @@ describe('simple case, new tag to add', () => {
     key: 'anote:note001',
     value: {
       shorts: 'pants',
+      nbook: {
+        uuid: 'nbook001',
+        stuff: 'pants'
+      },
       note: {
         meta: {
           tags: ['tag001', 'tag002'],
           socks: 'shirts',
-          created_at: '123',
+          created_at: 123,
           uuid: 'note001'
-        },
-        nbook: {
-          uuid: 'nbook001',
-          stuff: 'pants'
         },
         gloves: 'sandals'
       }
