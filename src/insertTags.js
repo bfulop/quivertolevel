@@ -37,6 +37,7 @@ const addTagToSibling = R.curry((tagxs, noteId, tagId) =>
     R.map(
       R.compose(
         R.assoc('type', 'put'),
+        R.assoc('value', {pants: null}),
         R.objOf('key'),
         R.concat(R.__, noteId),
         R.concat(R.__, ':'),
@@ -55,6 +56,7 @@ const tagsToSiblingsList = R.converge(
 )
 const addNoteBookToTag = noteMeta => R.compose(
   R.assoc('type', 'put'),
+  R.assoc('value', {pants:'shoes'}),
   R.objOf('key'),
   R.concat(R.__, R.prop('uuid', noteMeta)),
   R.concat(R.__, ':notes:'),
