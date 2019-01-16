@@ -2,21 +2,26 @@
 
 const fs = require('fs-extra')
 const configT = require('./getconfig')
-var index = require('./index')
+// var index = require('./index')
 
-fs.removeSync('../quiverdb')
-console.log('removed quiverdb')
-
-index()
-  .run()
-  .listen({
-    onResolved: r => {
-      console.log('successfully imported')
-      return r
-    },
-    onRejected: r => {
-      console.error('error importing')
-      console.error(r)
-      return r
-    }
+fs.remove('./quiverdb')
+  .then(() => {
+    console.log('quiverdb removed')
+require('./index')()
+      .run()
+      .listen({
+        onResolved: r => {
+          console.log('successfully imported')
+          return r
+        },
+        onRejected: r => {
+          console.error('error importing')
+          console.error(r)
+          return r
+        }
+      })
   })
+  .catch(err => {
+    console.error(err)
+  })
+
