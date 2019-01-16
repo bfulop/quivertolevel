@@ -28,10 +28,11 @@ const batchT = b =>
       .catch(r.reject)
   })
 
-const buildUniqueTags = t => R.compose(
-  R.over(R.lensPath([t,'count']), R.inc),
-  R.mergeDeepRight(R.objOf(t, {count:0}))
-)
+const buildUniqueTags = t =>
+  R.compose(
+    R.over(R.lensPath([t, 'count']), R.inc),
+    R.mergeDeepRight(R.objOf(t, { count: 0 }))
+  )
 const creatUniqueTagId = R.compose(
   R.concat('atag:'),
   R.nth(1),
@@ -47,15 +48,22 @@ const getUniqueTags = () =>
       })
       .on('end', () => r.resolve(uniqueTags))
   })
-const toTagDBInput = ([key, val]) => R.compose(
-  R.assoc('type', 'put'),
-  R.assoc('key', key),
-  R.objOf('value')
-)(val)
+const toTagDBInput = ([key, val]) =>
+  R.compose(
+    R.assoc('type', 'put'),
+    R.assoc('key', key),
+    R.objOf('value')
+  )(val)
 
-const listTags = () => getUniqueTags()
-.map(R.compose(R.map(toTagDBInput), R.toPairs))
-.chain(batchT)
+const listTags = () =>
+  getUniqueTags()
+    .map(
+      R.compose(
+        R.map(toTagDBInput),
+        R.toPairs
+      )
+    )
+    .chain(batchT)
 
 const prepareUniqueSiblingData = R.compose(
   R.map(R.over(R.lensProp('count'), R.inc)),
@@ -85,11 +93,15 @@ const getUniqueSiblings = () =>
       .on('end', () => r.resolve(uniqueTags))
   })
 
-
-const listSiblings = () => getUniqueSiblings()
-.map(R.compose(R.map(toTagDBInput), R.toPairs))
-.chain(batchT)
-
+const listSiblings = () =>
+  getUniqueSiblings()
+    .map(
+      R.compose(
+        R.map(toTagDBInput),
+        R.toPairs
+      )
+    )
+    .chain(batchT)
 
 const processASiblingRatio = R.converge(
   (siblingTag, siblingCount, targetCountT) =>
@@ -128,9 +140,9 @@ const calcRatios = () =>
       .on('data', t => atagupdatexs.push(t))
       .on('end', () => r.resolve(atagupdatexs))
   })
-  .map(R.map(processRatios))
-  .chain(waitAll)
-  .chain(batchT)
+    .map(R.map(processRatios))
+    .chain(waitAll)
+    .chain(batchT)
 
 const importRatio = R.converge(
   (ratioT, tag) =>
@@ -157,21 +169,9 @@ const compareRatios = R.compose(
   R.map(
     R.converge(
       (nums, data) =>
-        R.assocPath(
-          ['value', 'child'],
-          R.ifElse(
-            R.apply(R.gt),
-            () => {console.log('true')
-              return 1
-            },
-            () => {console.log('false')
-              return -1
-            }
-          )(nums),
-          data),
+        R.assocPath(['value', 'child'], R.apply(R.gt)(nums), data),
       [
         R.compose(
-          logger,
           R.values,
           R.pick(['ratio', 'childratio']),
           R.prop('value')
@@ -190,9 +190,9 @@ const summariseRatios = () =>
       .on('data', t => atagupdatexs.push(t))
       .on('end', () => r.resolve(atagupdatexs))
   })
-  .map(R.map(compareRatios))
-  .chain(waitAll)
-  .chain(batchT)
+    .map(R.map(compareRatios))
+    .chain(waitAll)
+    .chain(batchT)
 
 const enumChildren = tagId =>
   task(r => {
@@ -201,36 +201,43 @@ const enumChildren = tagId =>
       R.over(R.lensProp('lt'), R.concat(R.__, '~')),
       R.zipObj(['gt', 'lt']),
       R.repeat(R.__, 2),
-      R.concat('atagsibling:'),
+      R.concat('atagsibling:')
     )
 
     db()
       .createValueStream(createsiblingselector(tagId))
       .on('data', t => {
-        parentratio = R.add(parentratio, R.prop('child', t))
+        parentratio = R.ifElse(
+          R.prop('child'),
+          () => R.inc(parentratio),
+          () => R.dec(parentratio)
+        )(t)
       })
       .on('end', () => r.resolve(parentratio))
   })
 
 const calcParentRatio = R.converge(
-  (ratioT, tag) => ratioT.map(ratio => R.assocPath(['value', 'parentratio'], ratio, tag)),
+  (ratioT, tag) =>
+    ratioT.map(ratio => R.assocPath(['value', 'parentratio'], ratio, tag)),
   [
-  R.compose(
-    enumChildren,
     R.compose(
-      R.nth(1),
-      R.split(':')
+      enumChildren,
+      R.compose(
+        R.nth(1),
+        R.split(':')
+      ),
+      R.prop('key')
     ),
-    R.prop('key'),
-  ),
-  R.identity
-])
+    R.identity
+  ]
+)
 
-const calcParentRatioTest = () => of({key:'atag:atag1', 'value': {count:4, parentratio: 1, istrue:false}})
+const calcParentRatioTest = () =>
+  of({ key: 'atag:atag1', value: { count: 4, parentratio: 1, istrue: false } })
 
 const setParentRatio = R.compose(
   R.chain(t => putT(t.key, t.value)),
-  calcParentRatio,
+  calcParentRatio
 )
 
 const addParentRatio = () =>
@@ -241,12 +248,13 @@ const addParentRatio = () =>
       .on('data', t => atagupdatexs.push(t))
       .on('end', () => r.resolve(atagupdatexs))
   })
-  .map(R.map(setParentRatio))
-  .chain(waitAll)
+    .map(R.map(setParentRatio))
+    .chain(waitAll)
 
-const processTags = () => listTags()
-.chain(listSiblings)
-  // R.traverse(of, R.call, [listUniqueTags, listSiblings])
+const processTags = () =>
+  listTags()
+    .chain(listSiblings)
+    // R.traverse(of, R.call, [listUniqueTags, listSiblings])
     .chain(calcRatios)
     .chain(summariseRatios)
     .chain(addParentRatio)
