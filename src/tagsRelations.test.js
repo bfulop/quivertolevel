@@ -85,12 +85,12 @@ describe('summarising the tags', () => {
     })
     test('sets "child" state', () => {
       return expect(db.get('atagsibling:atag1:atag2')).resolves.toMatchObject({
-        child: true
+        child: 1
       })
     })
     test('sets "child" state for sibling', () => {
       return expect(db.get('atagsibling:atag2:atag1')).resolves.toMatchObject({
-        child: false
+        child: -1
       })
     })
   })

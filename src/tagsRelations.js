@@ -28,7 +28,6 @@ const batchT = b =>
       .catch(r.reject)
   })
 
-
 const buildUniqueTags = t => R.compose(
   R.over(R.lensPath([t,'count']), R.inc),
   R.mergeDeepRight(R.objOf(t, {count:0}))
@@ -118,17 +117,20 @@ const processASiblingRatio = R.converge(
 )
 
 const processRatios = R.compose(
-  r => r.run(),
-  R.chain(t => putT(R.prop('key', t), R.prop('value', t))),
+  R.map(R.assoc('type', 'put')),
   processASiblingRatio
 )
 const calcRatios = () =>
   task(r => {
+    let atagupdatexs = []
     db()
       .createReadStream({ gt: 'atagsibling:', lt: 'atagsibling:~' })
-      .on('data', processRatios)
-      .on('end', () => r.resolve())
+      .on('data', t => atagupdatexs.push(t))
+      .on('end', () => r.resolve(atagupdatexs))
   })
+  .map(R.map(processRatios))
+  .chain(waitAll)
+  .chain(batchT)
 
 const importRatio = R.converge(
   (ratioT, tag) =>
@@ -151,14 +153,25 @@ const importRatio = R.converge(
 )
 
 const compareRatios = R.compose(
-  r => r.run(),
-  R.chain(t => putT(R.prop('key', t), R.prop('value', t))),
+  R.map(R.assoc('type', 'put')),
   R.map(
     R.converge(
       (nums, data) =>
-        R.assocPath(['value', 'child'], R.apply(R.gt, nums), data),
+        R.assocPath(
+          ['value', 'child'],
+          R.ifElse(
+            R.apply(R.gt),
+            () => {console.log('true')
+              return 1
+            },
+            () => {console.log('false')
+              return -1
+            }
+          )(nums),
+          data),
       [
         R.compose(
+          logger,
           R.values,
           R.pick(['ratio', 'childratio']),
           R.prop('value')
@@ -171,21 +184,19 @@ const compareRatios = R.compose(
 )
 const summariseRatios = () =>
   task(r => {
+    let atagupdatexs = []
     db()
       .createReadStream({ gt: 'atagsibling:', lt: 'atagsibling:~' })
-      .on('data', compareRatios)
-      .on('end', () => r.resolve())
+      .on('data', t => atagupdatexs.push(t))
+      .on('end', () => r.resolve(atagupdatexs))
   })
+  .map(R.map(compareRatios))
+  .chain(waitAll)
+  .chain(batchT)
 
 const enumChildren = tagId =>
   task(r => {
     let parentratio = 0
-    const selector = R.concat('atagsibling:', tagId)
-    const updateparentratio = R.ifElse(
-      R.prop('child'),
-      () => (parentratio = R.inc(parentratio)),
-      () => (parentratio = R.dec(parentratio))
-    )
     const createsiblingselector = R.compose(
       R.over(R.lensProp('lt'), R.concat(R.__, '~')),
       R.zipObj(['gt', 'lt']),
@@ -195,7 +206,9 @@ const enumChildren = tagId =>
 
     db()
       .createValueStream(createsiblingselector(tagId))
-      .on('data', updateparentratio)
+      .on('data', t => {
+        parentratio = R.add(parentratio, R.prop('child', t))
+      })
       .on('end', () => r.resolve(parentratio))
   })
 
