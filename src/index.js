@@ -4,7 +4,8 @@ const { List } = require('immutable-ext')
 const { of } = require('folktale/concurrency/task')
 const flattenNoteBook = require('./flattenNoteBook')
 const createKeys = require('./createKeys')
-const { calcRelations } = require('./tagsRelations')
+const { processTags } = require('./tagsRelations')
+const { createTimelines } = require('./tagTimeline')
 
 const logger = r => {
   console.log('hhhhhh %o', r)
@@ -16,6 +17,7 @@ const upload = () => processFolders()
   .map(xs => xs.map(r => createKeys(r)))
   .chain(xs => xs.traverse(of, addNoteToDB))
   .map(xs => xs.fold([]))
-  .chain(calcRelations)
+  .chain(processTags)
+  .chain(createTimelines)
 
 module.exports = upload
