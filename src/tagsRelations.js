@@ -20,58 +20,77 @@ const putT = R.curry((key, value) =>
   fromPromised((k, v) => db().put(k, v))(key, value)
 )
 
-const prepareUniqueTagData = R.compose(
-  R.map(R.over(R.lensProp('count'), R.inc)),
-  R.map(t => t.getOrElse({ count: 0 })),
-  getT
-)
-const insertUniqueTag = R.curry((tagId, tagRecordT) =>
-  R.compose(
-    R.invoker(0, 'run'),
-    R.chain(putT(tagId))
-  )(tagRecordT)
-)
-
-const processUniqueTag = R.compose(
-  R.converge(insertUniqueTag, [R.identity, prepareUniqueTagData]),
-  R.concat('atag:'),
-  R.compose(
-    R.nth(1),
-    R.split(':')
-  )
-)
-
-const listUniqueTags = () =>
+const batchT = b =>
   task(r => {
     db()
-      .createKeyStream({ gt: 'tagsnotes:', lt: 'tagsnotes:~' })
-      .on('data', processUniqueTag)
-      .on('end', () => r.resolve())
+      .batch(b)
+      .then(r.resolve)
+      .catch(r.reject)
   })
+
+
+const buildUniqueTags = t => R.compose(
+  R.over(R.lensPath([t,'count']), R.inc),
+  R.mergeDeepRight(R.objOf(t, {count:0}))
+)
+const creatUniqueTagId = R.compose(
+  R.concat('atag:'),
+  R.nth(1),
+  R.split(':')
+)
+const getUniqueTags = () =>
+  task(r => {
+    let uniqueTags = {}
+    db()
+      .createKeyStream({ gt: 'tagsnotes:', lt: 'tagsnotes:~' })
+      .on('data', t => {
+        uniqueTags = buildUniqueTags(creatUniqueTagId(t))(uniqueTags)
+      })
+      .on('end', () => r.resolve(uniqueTags))
+  })
+const toTagDBInput = ([key, val]) => R.compose(
+  R.assoc('type', 'put'),
+  R.assoc('key', key),
+  R.objOf('value')
+)(val)
+
+const listTags = () => getUniqueTags()
+.map(R.compose(R.map(toTagDBInput), R.toPairs))
+.chain(batchT)
 
 const prepareUniqueSiblingData = R.compose(
   R.map(R.over(R.lensProp('count'), R.inc)),
   R.map(t => t.getOrElse({ count: 0 })),
   getT
 )
-const processUniqueSibling = R.compose(
-  R.converge(insertUniqueTag, [R.identity, prepareUniqueSiblingData]),
-  R.concat('atagsibling:'),
-  R.converge(R.unapply(R.reduce(R.concat, '')), [
+
+// tagsiblings:atag1:siblings:atag2:note001
+// atagsibling:atag1:atag2
+const createUniqueSiblingId = R.compose(
+  R.converge(R.unapply(R.reduce(R.concat, 'atagsibling:')), [
     R.nth(1),
     () => ':',
-    R.nth(2)
+    R.nth(3)
   ]),
   R.split(':')
 )
 
-const listSiblings = () =>
+const getUniqueSiblings = () =>
   task(r => {
+    let uniqueTags = {}
     db()
       .createKeyStream({ gt: 'tagsiblings:', lt: 'tagsiblings:~' })
-      .on('data', processUniqueSibling)
-      .on('end', () => r.resolve())
+      .on('data', t => {
+        uniqueTags = buildUniqueTags(createUniqueSiblingId(t))(uniqueTags)
+      })
+      .on('end', () => r.resolve(uniqueTags))
   })
+
+
+const listSiblings = () => getUniqueSiblings()
+.map(R.compose(R.map(toTagDBInput), R.toPairs))
+.chain(batchT)
+
 
 const processASiblingRatio = R.converge(
   (siblingTag, siblingCount, targetCountT) =>
@@ -212,8 +231,9 @@ const addParentRatio = () =>
   .map(R.map(setParentRatio))
   .chain(waitAll)
 
-const processTags = () =>
-  R.traverse(of, R.call, [listUniqueTags, listSiblings])
+const processTags = () => listTags()
+.chain(listSiblings)
+  // R.traverse(of, R.call, [listUniqueTags, listSiblings])
     .chain(calcRatios)
     .chain(summariseRatios)
     .chain(addParentRatio)

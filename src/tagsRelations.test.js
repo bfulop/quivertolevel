@@ -14,10 +14,10 @@ const data = [
   { type: 'put', key: 'tagsnotes:atag1:notes:126:note004', value: 'pants' },
   { type: 'put', key: 'tagsnotes:atag2:notes:123:note001', value: 'pants' },
   { type: 'put', key: 'tagsnotes:atag2:notes:124:note002', value: 'pants' },
-  { type: 'put', key: 'tagsiblings:atag1:atag2:note001', value: 'pants' },
-  { type: 'put', key: 'tagsiblings:atag1:atag2:note002', value: 'pants' },
-  { type: 'put', key: 'tagsiblings:atag2:atag1:note001', value: 'pants' },
-  { type: 'put', key: 'tagsiblings:atag2:atag1:note002', value: 'pants' }
+  { type: 'put', key: 'tagsiblings:atag1:siblings:atag2:note001', value: 'pants' },
+  { type: 'put', key: 'tagsiblings:atag1:siblings:atag2:note002', value: 'pants' },
+  { type: 'put', key: 'tagsiblings:atag2:siblings:atag1:note001', value: 'pants' },
+  { type: 'put', key: 'tagsiblings:atag2:siblings:atag1:note002', value: 'pants' }
 ]
 db.batch(data, err => {
   if (err) {
