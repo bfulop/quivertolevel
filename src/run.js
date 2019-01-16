@@ -2,12 +2,11 @@
 
 const fs = require('fs-extra')
 const configT = require('./getconfig')
-// var index = require('./index')
 
 fs.remove('./quiverdb')
   .then(() => {
     console.log('quiverdb removed')
-require('./index')()
+    require('./index')()
       .run()
       .listen({
         onResolved: r => {
@@ -24,4 +23,3 @@ require('./index')()
   .catch(err => {
     console.error(err)
   })
-
