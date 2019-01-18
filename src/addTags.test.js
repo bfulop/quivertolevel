@@ -13,7 +13,8 @@ getconfig.mockReturnValue(
       { name: 'tag3', related: ['blah3', 'foo3'] },
       { name: 'tag4', related: ['relatedtg4'] },
       { name: 'tag5', related: ['relatedtg5'] },
-      { name: 'containsquiver', related: ['starttag'] }
+      { name: 'containsquiver', related: ['starttag'] },
+      { name: 'tag6', related: ['relatedtg6']}
     ]
   })
 )
@@ -34,6 +35,9 @@ const notedata = {
         data: 'socks relatedtg4 shoes shirts tag2'
       }
     ]
+  },
+  nbook: {
+    'name': 'pants relatedtg6'
   }
 }
 
@@ -74,6 +78,11 @@ describe('calculating the tags', () => {
   test('does not contain empty values', () => {
     subject.map(r => {
       expect(r.meta.tags).not.toContain(undefined)
+    })
+  })
+  test('considers notebook title (name)', () => {
+    subject.map(r => {
+      expect(r.meta.tags).toContain('tag6')
     })
   })
 })

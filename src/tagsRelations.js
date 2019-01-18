@@ -2,6 +2,7 @@ const R = require('ramda')
 const { task, of, fromPromised, waitAll } = require('folktale/concurrency/task')
 const Maybe = require('folktale/maybe')
 const db = require('./utils/db')
+const { processNotebooks } = require('./tagNotebooks')
 
 const logger = r => {
   console.log('----------------------------')
@@ -258,5 +259,6 @@ const processTags = () =>
     .chain(calcRatios)
     .chain(summariseRatios)
     .chain(addParentRatio)
+    .chain(processNotebooks)
 
 module.exports = { processTags }

@@ -38,7 +38,7 @@ const config = {
 
 const nameLens = R.lensProp('name')
 const intoArray = R.append(R.__, [])
-const converttoRegex = t => new RegExp('(\\s+|^)' + t + '(\\s+|$)')
+const converttoRegex = t => new RegExp('(\\s+|^)' + t + '(\\s+|$)', 'i', 'm')
 const mergenames = R.compose(
   R.map(converttoRegex),
   R.flatten,
@@ -91,21 +91,26 @@ const getTagsEveryWhere = dict =>
     R.compose(
       R.flatten,
       R.map(getDictionaryTag(dict)),
-      R.view(R.lensPath(['meta', 'tags']))
+      R.view(R.lensPath(['note','meta', 'tags']))
     ),
     R.compose(
       getTagsC(dict),
       R.objOf('data'),
-      R.path(['content', 'title'])
+      R.path(['note','content', 'title'])
+    ),
+    R.compose(
+      getTagsC(dict),
+      R.objOf('data'),
+      R.path(['nbook', 'name'])
     ),
     R.compose(
       getAllTags(dict),
-      R.path(['content', 'cells'])
+      R.path(['note','content', 'cells'])
     )
   ])
 const collectTags = dict =>
-  R.converge(R.set(R.lensPath(['meta', 'tags'])), [
-    getTagsEveryWhere(dict),
+  R.converge(R.set(R.lensPath(['note','meta', 'tags'])), [
+    R.compose(R.uniq, getTagsEveryWhere(dict)),
     R.identity
   ])
 

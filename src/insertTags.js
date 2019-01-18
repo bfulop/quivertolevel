@@ -29,7 +29,16 @@ const addANoteToList = noteMeta =>
     R.concat('tagsnotes:')
   )
 const notesToTagsList = R.converge(
-  (tagxs, noteMeta) => tagxs.map(addANoteToList(noteMeta)),
+  (tagxs, noteMeta) => {
+    if(!tagxs.length) {
+      console.error('!!!!', noteMeta.title)
+    }
+    // if(tagxs.length > 1) {
+    // console.log('**********')
+    // console.log(noteMeta.title)
+    // console.log(tagxs)
+    // }
+    return tagxs.map(addANoteToList(noteMeta))},
   [R.prop('tags'), R.identity]
 )
 const addTagToSibling = R.curry((tagxs, noteId, tagId) =>
