@@ -10,6 +10,7 @@ const { createTimelines } = require('./tagTimeline')
 const { findTags } = require('./addTags')
 
 const logger = r => {
+  console.log('index.js ****************')
   console.log('hhhhhh %o', r)
   return r
 }
@@ -19,10 +20,9 @@ const upload = () => processFolders()
   .map(R.map(findTags))
   .chain(waitAll)
   .map(R.map(createKeys))
-  .map(R.map(addNoteToDB))
-  .chain(waitAll)
-  // .chain(xs => xs.traverse(of, addNoteToDB))
-  // .map(xs => xs.fold([]))
+  .map(List)
+  .chain(xs => xs.traverse(of, addNoteToDB))
+  .map(xs => xs.fold([]))
   .chain(processTags)
   .chain(createTimelines)
 
