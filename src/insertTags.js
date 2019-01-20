@@ -30,9 +30,9 @@ const addANoteToList = noteMeta =>
   )
 const notesToTagsList = R.converge(
   (tagxs, noteMeta) => {
-    if(!tagxs.length) {
-      console.error('!!!!', noteMeta.title)
-    }
+    // if(!tagxs.length) {
+    //   console.error('!!!!', noteMeta.title)
+    // }
     // if(tagxs.length > 1) {
     // console.log('**********')
     // console.log(noteMeta.title)
@@ -65,7 +65,7 @@ const tagsToSiblingsList = R.converge(
 )
 const addNoteBookToTag = noteMeta => R.compose(
   R.assoc('type', 'put'),
-  R.assoc('value', {pants:'shoes'}),
+  R.assoc('value', R.prop('nbook', noteMeta)),
   R.objOf('key'),
   R.concat(R.__, R.prop('uuid', noteMeta)),
   R.concat(R.__, ':notes:'),

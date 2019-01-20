@@ -28,32 +28,30 @@ const putT = R.curry((key, value) =>
   fromPromised((k, v) => db().put(k, v))(key, value)
 )
 
-const update = R.compose(
-  R.over(R.lensPath(['shoes', 'count']), R.inc),
-  R.mergeDeepRight({ shoes: { count: 0 } })
-)
-const groupNoteTags = (tag, notebook) =>
+const groupNoteTags = (tagKey, notebook, tagVal) =>
   R.compose(
-    R.over(R.lensPath([tag, notebook, 'count']), R.inc),
-    R.mergeDeepRight(R.objOf(tag, R.objOf(notebook, { count: 0 })))
+    R.over(R.lensPath([tagKey, notebook, 'count']), R.inc),
+    R.mergeDeepRight(R.objOf(tagKey, R.objOf(notebook, R.assoc('count', 0, tagVal))))
   )
 
 const getTagId = R.compose(
   R.nth(1),
-  R.split(':')
+  R.split(':'),
+  R.prop('key')
 )
 const getTagNotebookId = R.compose(
   R.nth(3),
-  R.split(':')
+  R.split(':'),
+  R.prop('key')
 )
 
 const summarizeNotebooks = () =>
   task(r => {
     let notebookgroups = {}
     db()
-      .createKeyStream({ gt: 'tagsnotebooks:', lt: 'tagsnotebooks:~' })
+      .createReadStream({ gt: 'tagsnotebooks:', lt: 'tagsnotebooks:~' })
       .on('data', t => {
-        notebookgroups = groupNoteTags(getTagId(t), getTagNotebookId(t))(
+        notebookgroups = groupNoteTags(getTagId(t), getTagNotebookId(t), R.prop('value', t))(
           notebookgroups
         )
       })

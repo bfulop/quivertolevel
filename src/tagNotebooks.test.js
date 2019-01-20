@@ -8,12 +8,12 @@ const db = levelup(encode(memdown(), { valueEncoding: 'json' }))
 
 // seed some data
 const data = [
-  { type: 'put', key: 'tagsnotebooks:tag001:notebooks:nbook001:notes:note001', value: 'pants' },
-  { type: 'put', key: 'tagsnotebooks:tag001:notebooks:nbook001:notes:note002', value: 'pants' },
-  { type: 'put', key: 'tagsnotebooks:tag001:notebooks:nbook001:notes:note003', value: 'pants' },
+  { type: 'put', key: 'tagsnotebooks:tag001:notebooks:nbook001:notes:note001', value: {shorts:'pants'} },
+  { type: 'put', key: 'tagsnotebooks:tag001:notebooks:nbook001:notes:note002', value: {shorts:'pants'} },
+  { type: 'put', key: 'tagsnotebooks:tag001:notebooks:nbook001:notes:note003', value: {shorts:'pants'} },
 
-  { type: 'put', key: 'tagsnotebooks:tag001:notebooks:nbook002:notes:note007', value: 'pants' },
-  { type: 'put', key: 'tagsnotebooks:tag002:notebooks:nbook002:notes:note007', value: 'pants' },
+  { type: 'put', key: 'tagsnotebooks:tag001:notebooks:nbook002:notes:note007', value: {shorts:'pants'} },
+  { type: 'put', key: 'tagsnotebooks:tag002:notebooks:nbook002:notes:note007', value: {shorts:'pants'} },
 
   { type: 'put', key: 'anotebook:nbook001:123:note001', value: 'shorts'},
   { type: 'put', key: 'anotebook:nbook001:124:note002', value: 'shorts'},
@@ -84,7 +84,7 @@ describe('list notebooks by tags', () => {
   })
   describe('list single notebooks by tag', () => {
     test('inserts notebookid ordered by percentage (ascending, inverse)', () => {
-      return expect(db.get('atagnotebook:tag001:50:nbook001')).resolves.toMatchObject({ count: 3 })
+      return expect(db.get('atagnotebook:tag001:50:nbook001')).resolves.toMatchObject({ count: 3, shorts:'pants' })
     })
   })
 })
