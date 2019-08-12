@@ -68,7 +68,9 @@ const noteslengthpermonth = q =>
       .on('data', () => (counta = R.inc(counta)))
       .on('end', () => r.resolve(counta))
   })
-const monthsnumber = () => differenceInMonths(startdate(), new Date())
+
+const monthsnumber = () => R.inc(differenceInMonths(startdate(), new Date()))
+
 const buildHistogram = R.compose(
   waitAll,
   R.map(noteslengthpermonth),
@@ -77,6 +79,7 @@ const buildHistogram = R.compose(
   R.split(':'),
   R.prop('key')
 )
+
 // createmonthqueries('nbook1')(12)
 const calcTimelines = R.converge(
   (histogramT, tag) =>
