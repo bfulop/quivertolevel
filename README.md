@@ -32,6 +32,6 @@ The note contents will be (see `processNote.js`):
 
 ### To run
 
-```
+```shell
 $ node src/run
 ```
