@@ -30,6 +30,26 @@ The note contents will be (see `processNote.js`):
 }
 ```
 
+### More config options
+
+The `config.json` file has more options to process the notes and notebooks when importing.
+
+```json
+  "titlereplacements": [
+    {
+      "from": "foo",
+      "to": "bar"
+    },
+    {
+      "from": "baz",
+      "to": "pants"
+    }
+  ]
+```
+
+These will replace texts in the notebooks titles.
+
+
 ### To run
 
 ```shell
